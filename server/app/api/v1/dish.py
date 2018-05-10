@@ -1,29 +1,147 @@
-
 from flask import request
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
+from app.models import Dish, db
 
 api = Namespace('dish')
 
 @api.route('/')
-class Dish(Resource):
-
-    def get(self):
-        print(g.json)
-
-        return {'name': 'something'}, 200, None
+class Dishes(Resource):
 
     def post(self):
-        print(g.json)
+        
+        try:
+            form = request.form
+            name = form.get('name')
+            if name is None:
+                return {'message': 'Dish name is required'}, 400
 
-        return {}, 400, None
+            category = form.get('category')
+            if name is None:
+                category = 'other'
 
-    def put(self):
-        print(g.json)
+            price = form.get('price')
+            if price is None or price < 0:
+                return {'message': 'Price is required and not negative.'}, 400
 
-        return None, 200, None
+            stock = form.get('stock')
+            if stock is None:
+                stock = 0
+            if stock < 0:
+                return {'message': 'Stock can not be negative.'}, 400
 
-    def delete(self):
-        print(g.json)
+            avaliable = (form.get('avaliable') == 'True')
 
-        return None, 200, None
+            likes = form.get('likes')
+            if likes is None:
+                likes = 0
+            if likes < 0:
+                return {'message': 'Likes can not be negative.'}, 400
+
+            description = form.get('description')
+            if description is None:
+                description = ""
+
+            dish = Dish()
+            dish.name = name
+            dish.category = category
+            dish.price = price
+            dish.stock = stock
+            dish.avaliable = avaliable
+            dish.likes = likes
+            dish.description = description
+            db.session.add(dish)
+            db.session.commit()
+
+            return {'dishId': dish.id}, 200
+        except Exception as e:
+            print e
+            return {'message': 'Internal Server Error'}, 500
+
+@api.route('/did/<int:did>')
+class Dish(Resource):
+    def get(self, did):
+        dish = Dish.query.filter_by(id=did).first()
+        if dish is None:
+            return {'message': 'Dish not found'}, 404
+
+        return dish.json(), 200
+
+    def put(self, did):
+        dish = Dish.query.filter_by(id=did).first()
+        if dish is None:
+            return {'message': 'Dish not found'}, 404
+
+        try:
+            form = request.form
+            name = form.get('name')
+            if name is None:
+                return {'message': 'Dish name is required'}, 400
+
+            category = form.get('category')
+            if name is None:
+                category = 'other'
+
+            price = form.get('price')
+            if price is None or price < 0:
+                return {'message': 'Price is required and not negative.'}, 400
+
+            stock = form.get('stock')
+            if stock is None:
+                stock = 0
+            if stock < 0:
+                return {'message': 'Stock can not be negative.'}, 400
+
+            avaliable = (form.get('avaliable') == 'True')
+
+            likes = form.get('likes')
+            if likes is None:
+                likes = 0
+            if likes < 0:
+                return {'message': 'Likes can not be negative.'}, 400
+
+            description = form.get('description')
+            if description is None:
+                description = ""
+
+            dish.name = name
+            dish.category = category
+            dish.price = price
+            dish.stock = stock
+            dish.avaliable = avaliable
+            dish.likes = likes
+            dish.description = description
+            db.session.commit()
+
+            return {'message': 'Successfully update.', 'dishId': dish.id}, 200
+        except Exception as e:
+            print e
+            return {'message': 'Internal Server Error'}, 500  
+
+    def delete(self, did):
+        dish = Dish.query.filter_by(id=did).first()
+        if dish is None:
+            return {'message': 'Dish not found'}, 404
+        db.session.delete(dish)
+        db.session.commit()
+        return {'message': 'Successfully delete.'}, 200
+
+@api.route('/category/<string:cat>')
+class Dish(Resource):     
+    def get(self, cat):
+        
+        try:
+            if cat is None:
+                cat = 'other'
+
+            dishes =[]
+            tmp = Dish.query.filter_by(category=cat).all()
+            for dish in tmp:
+                dishes.append(dish.json())
+
+            return {'category': cat,
+                     'dishes': dishes}, 200
+
+        except Exception as e:
+            print e
+            return {'message': 'Internal Server Error'}, 500
