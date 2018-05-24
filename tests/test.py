@@ -1,14 +1,21 @@
-from requests import put, get, post
-import json
+from dish_test import TestDish
+from order_test import TestOrder
+from rstr_test import TestRstr
 
-res = post('http://localhost:5000/api/dish/', data={
-  "name": "毛血旺",
-  "category": "荤菜",
-  "price": 28.5,
-  "stock": 99,
-  "avaliable": 'True',
-  "likes": 4,
-  "description": "Hello 毛血旺"
-}).json()
+if __name__ == '__main__':
+    # test_dish = TestDish()
+    # test_dish.addDish()
+    # test_dish.getDish()
+    # test_dish.modifyDish()
+    # test_dish.deleteDish()
+    # test_dish.getDishByCat()
 
-print(res)
+    # test_order = TestOrder()
+    # test_order.postOrder()
+    # test_order.getOrder()
+    # test_order.payOrder()
+
+    test_rstr = TestRstr()
+    # test_rstr.addRstr()
+    # test_rstr.postMenu()
+    test_rstr.getRstr()

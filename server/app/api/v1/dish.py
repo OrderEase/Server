@@ -13,11 +13,14 @@ class Dishes(Resource):
         try:
             form = request.form
             name = form.get('name')
+            exist = Dish.query.filter_by(name=name).first()
+            if exist is not None:
+                return {'message': 'Dish name already exist'}, 400
             if name is None:
                 return {'message': 'Dish name is required'}, 400
 
             category = form.get('category')
-            if name is None:
+            if category is None:
                 category = 'other'
 
             price = float(form.get('price'))
@@ -82,11 +85,11 @@ class Dishes(Resource):
             if name is None:
                 category = 'other'
 
-            price = form.get('price')
+            price = float(form.get('price'))
             if price is None or price < 0:
                 return {'message': 'Price is required and not negative.'}, 400
 
-            stock = form.get('stock')
+            stock = int(form.get('stock'))
             if stock is None:
                 stock = 0
             if stock < 0:
@@ -94,7 +97,7 @@ class Dishes(Resource):
 
             avaliable = (form.get('avaliable') == 'True')
 
-            likes = form.get('likes')
+            likes = int(form.get('likes'))
             if likes is None:
                 likes = 0
             if likes < 0:
@@ -136,6 +139,8 @@ class Dishes(Resource):
 
             dishes =[]
             tmp = Dish.query.filter_by(category=cat).all()
+            if tmp is None:
+                return {'message': 'Dishes not found'}, 404
             for dish in tmp:
                 dishes.append(dish.json())
 
