@@ -4,8 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 orders_dishes = db.Table('orders_dishes',
-    db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True),
-    db.Column('dish_id', db.Integer, db.ForeignKey('dish.id'), primary_key=True)
+    db.Column('order_id', db.Integer, db.ForeignKey('orders.id')),
+    db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'))
 )
 
 class Order(db.Model):
@@ -22,8 +22,8 @@ class Order(db.Model):
 
     dishes = db.relationship('Dish', secondary=orders_dishes, lazy='dynamic',
         backref=db.backref('orders', lazy='dynamic'))
-    uid = db.Column(db.Integer, db.ForeignKey('user.id'),
-        nullable=False)
+    # uid = db.Column(db.Integer, db.ForeignKey('user.id'),
+    #     nullable=False)
 
     def __repr__(self):
         tmp = {
@@ -45,6 +45,7 @@ class Order(db.Model):
         }
 
 class Dish(db.Model):
+    
     __tablename__ = 'dishes'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -75,3 +76,6 @@ class Dish(db.Model):
             'likes': self.likes,
             'description': self.description
         }
+
+    def testfunc():
+        print('test DISH')

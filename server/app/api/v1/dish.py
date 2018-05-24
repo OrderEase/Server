@@ -20,11 +20,11 @@ class Dishes(Resource):
             if name is None:
                 category = 'other'
 
-            price = form.get('price')
+            price = float(form.get('price'))
             if price is None or price < 0:
                 return {'message': 'Price is required and not negative.'}, 400
 
-            stock = form.get('stock')
+            stock = int(form.get('stock'))
             if stock is None:
                 stock = 0
             if stock < 0:
@@ -32,7 +32,7 @@ class Dishes(Resource):
 
             avaliable = (form.get('avaliable') == 'True')
 
-            likes = form.get('likes')
+            likes = int(form.get('likes'))
             if likes is None:
                 likes = 0
             if likes < 0:
@@ -55,11 +55,11 @@ class Dishes(Resource):
 
             return {'dishId': dish.id}, 200
         except Exception as e:
-            print e
+            print(e)
             return {'message': 'Internal Server Error'}, 500
 
 @api.route('/did/<int:did>')
-class Dish(Resource):
+class Dishes(Resource):
     def get(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -115,7 +115,7 @@ class Dish(Resource):
 
             return {'message': 'Successfully update.', 'dishId': dish.id}, 200
         except Exception as e:
-            print e
+            print(e)
             return {'message': 'Internal Server Error'}, 500  
 
     def delete(self, did):
@@ -127,7 +127,7 @@ class Dish(Resource):
         return {'message': 'Successfully delete.'}, 200
 
 @api.route('/category/<string:cat>')
-class Dish(Resource):     
+class Dishes(Resource):     
     def get(self, cat):
         
         try:
@@ -143,5 +143,5 @@ class Dish(Resource):
                      'dishes': dishes}, 200
 
         except Exception as e:
-            print e
+            print(e)
             return {'message': 'Internal Server Error'}, 500
