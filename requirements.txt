@@ -3,4 +3,4 @@ flask-restplus
 flask-sqlalchemy
 flask-mysqldb
 flask-login
-flask_script
+flask-script

@@ -34,6 +34,7 @@ class CuserLogin(Resource):
 				user = new_user
 
 			login_user(user)
+			# print(current_user)
 			return {'message': 'Successfully login.'}, 200
 
 		except Exception as e:
@@ -44,7 +45,6 @@ class CuserLogin(Resource):
 	@login_required(role="CUSTOMER")
 	def put(self):
 		''' log out '''
-
 		logout_user()
 
 		return {'message': "Successfully logout."}, 200

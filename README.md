@@ -1,6 +1,8 @@
 ## How to run
 
-Test in python3.6:
+Test in python3.6.
+
+Create your own `instance/config.py` at root directory.
 
 Create the virtual environmet:
 
@@ -23,6 +25,12 @@ pip install -r requirements.txt
 Start the server:
 
 ```shell
-python server.py
+python manager.py runserver
+```
+
+Run all the unit tests:
+
+```python
+python manager.py test
 ```
 

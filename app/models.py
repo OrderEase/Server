@@ -24,7 +24,6 @@ class User(db.Model, UserMixin):
             'id': self.id
         }
 
-
 orders_dishes = db.Table('orders_dishes',
     db.Column('order_id', db.Integer, db.ForeignKey('orders.id')),
     db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'))
@@ -109,7 +108,7 @@ class Dish(db.Model):
         }
 
 class Menu(db.Model):
-    
+
     __tablename__ = 'menu'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -144,7 +143,7 @@ class Menu(db.Model):
         }
 
 class Rstr(db.Model):
-    
+
     __tablename__ = 'rstr'
 
     id = db.Column(db.Integer, primary_key=True)
