@@ -16,6 +16,6 @@ if __name__ == '__main__':
     # test_order.payOrder()
 
     test_rstr = TestRstr()
-    # test_rstr.addRstr()
+    # test_rstr.modifyRstr()
     # test_rstr.postMenu()
     test_rstr.getRstr()

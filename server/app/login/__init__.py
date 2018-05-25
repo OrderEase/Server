@@ -34,7 +34,7 @@ def init_app(app):
 
 @login_manager.user_loader
 def load_user(id):
-        return User.query.get(id)
+    return User.query.get(id)
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
