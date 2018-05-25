@@ -30,6 +30,11 @@ orders_dishes = db.Table('orders_dishes',
     db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'))
 )
 
+menu_dishes = db.Table('menu_dishes',
+    db.Column('menu_id', db.Integer, db.ForeignKey('menu.id')),
+    db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'))
+)
+
 class Order(db.Model):
 
     __tablename__ = 'orders'
@@ -56,6 +61,9 @@ class Order(db.Model):
         return '{payDate}: 订单 {id}, 座位 {tableId} '.format(**tmp)
 
     def json(self):
+        t_dishes = []
+        for dish in self.dishes:
+            t_dishes.append(dish.json())
         return {
             'id': self.id,
             'tableId': self.tableId,
@@ -63,7 +71,8 @@ class Order(db.Model):
             'due': self.due,
             'isPay': self.isPay,
             'payWay': str(self.payWay),
-            'payDate': self.payDate.strftime("%Y-%m-%d %H:%M:%S")
+            'payDate': self.payDate.strftime("%Y-%m-%d %H:%M:%S"),
+            'dishes': t_dishes
         }
 
 class Dish(db.Model):
@@ -99,5 +108,63 @@ class Dish(db.Model):
             'description': self.description
         }
 
-    def testfunc():
-        print('test DISH')
+class Menu(db.Model):
+    
+    __tablename__ = 'menu'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+    dishes = db.relationship('Dish', secondary=menu_dishes, lazy='dynamic',
+        backref=db.backref('menu', lazy='dynamic'))
+
+    rstr_id = db.Column(db.Integer, db.ForeignKey('rstr.id'), nullable=False)
+
+    def __repr__(self):
+        tmp = {
+            'id': self.id,
+            'name': self.name,
+        }
+        return 'id: {id}, 菜单: {name}'.format(**tmp)
+
+    def json(self):
+        content = []
+        category = {}
+        for dish in self.dishes:
+            if dish.category in category.keys():
+                category[dish.category].append(dish.json())
+            else:
+                category[dish.category] = [dish.json()]
+
+        for cat in category:
+            content.append({'category':cat, 'dishes':category[cat]})
+        return {
+            'id': self.id,
+            'name': self.name,
+            'content': content
+        }
+
+class Rstr(db.Model):
+    
+    __tablename__ = 'rstr'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+    info = db.Column(db.String(256), nullable=False)
+    menus = db.relationship('Menu', backref='rstr', lazy='dynamic')
+
+    def __repr__(self):
+        tmp = {
+            'id': self.id,
+            'name': self.name,
+            'info': self.info
+        }
+        return 'id: {id}, 餐馆: {name}, 说明: {info} '.format(**tmp)
+
+    def json(self):
+        menu = self.menus[0].json()
+        return {
+            'id': self.id,
+            'name': self.name,
+            'info': self.info,
+            'menu': menu
+        }

@@ -2,6 +2,7 @@ from flask import request
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from app.models import Order, Dish, db
+from time import strptime
 
 api = Namespace('order')
 
@@ -16,19 +17,19 @@ class Orders(Resource):
                 return {'message': 'Table\'s id is required'}, 400
 
             order = Order()
-            order.tableId = tableId
             isPay = False
             payWay = 'Not yet pay'
-            payDate = strptime("1979-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+            payDate = datetime.now()
 
             total = 0
-            dishes = list(map(int, form.get('dishes').strip().split(',')))
-            for did in dishes:
+            dishesId = list(map(int, form.get('dishes').strip().split(',')))
+            dishes = []
+            for did in dishesId:
                 dish = Dish.query.filter_by(id=did).first()
                 if dish is None:
-                    return {'message': 'Dish (id: %i) is not found' % (did)}
+                    return {'message': 'Dish (id: %i) is not found' % (did)}, 404
                 total += dish.price
-                order.dishes.append(dish)
+                dishes.append(dish)
 
             due = total
 
@@ -38,6 +39,8 @@ class Orders(Resource):
             order.isPay = isPay
             order.payWay = payWay
             order.payDate = payDate
+            for dish in dishes:
+                order.dishes.append(dish)
             db.session.add(order)
             db.session.commit()
 
@@ -69,17 +72,31 @@ class Orders(Resource):
             if payId is None:
                 return {'message': 'pay id is wrong or not exist.'}, 400
 
-            order = Order.filter_by(id=oid).first()
+            order = Order.query.filter_by(id=oid).first()
             if order is None:
                 return {'message': 'Order not found.'}, 404
 
             if order.isPay:
                 return {'message': 'Order is paid already.'}, 400
 
-            order.payId = payId
             order.payDate = datetime.now()
             order.isPay = True
+            order.payWay = 'WeChat Pay'
             db.session.commit()
+
+            return {"message": "Successfully pay."}, 200
+
+        except Exception as e:
+            print(e)
+            return {'message': 'Internal Server Error'}, 500
+
+    def get(self, cuid, oid):
+        try:
+            order = Order.query.filter_by(id=oid).first()
+            if order is None:
+                return {'message': 'Order not found'}, 404
+
+            return order.json(), 200
 
         except Exception as e:
             print(e)
