@@ -16,7 +16,7 @@ def login_required(role="ANY", userID_field_name='userId'):
     the userId is the same as current user's.
 
     Args:
-        role (str, optional): {CUSTOMER, BUSSINES} The required role of the user
+        role (str, optional): {CUSTOMER, BUSINESS} The required role of the user
         userID_field_name (str, optional): The variable name of the user's ID in URL
 
     Returns:
@@ -28,7 +28,7 @@ def login_required(role="ANY", userID_field_name='userId'):
             if not current_user.is_authenticated:
                 return current_app.login_manager.unauthorized()
             if ((current_user.role != role) and (role != "ANY")):
-                return login_manager.unauthorized()
+                return {'message': 'Your role is not valid.'}, 401
             if (userID_field_name in kwargs.keys() and current_user.id != kwargs[userID_field_name]):
                 return {'message': 'You can only get your own infos.'}, 401
 

@@ -17,7 +17,7 @@ class FlaskClientTest(unittest.TestCase):
 
         response = self.client.post('http://localhost:5000/api/buser/', data={"restId": 1,
             "username": "aaa",
-            "role": "BUSSINES",
+            "role": "BUSINESS",
             "password": "123",
             "authority": "MANAGER"})
         self.assertTrue(response.status_code == 200)
@@ -25,7 +25,7 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaa",
             "restId": 1,
             "password": "123",
-            "role": "BUSSINES"
+            "role": "BUSINESS"
         })
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
 

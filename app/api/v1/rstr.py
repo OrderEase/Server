@@ -26,7 +26,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 修改餐馆信息
-    @login_required(role='BUSSINESS', userID_field_name='buid')
+    @login_required(role='BUSINESS', userID_field_name='buid')
     def put(self, buid):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -51,12 +51,12 @@ class Rstrs(Resource):
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
-    
+
 @api.route('/buid/<int:buid>/menu')
 class Rstrs(Resource):
 
     # 新建菜单
-    @login_required(role='BUSSINESS', userID_field_name='buid')
+    @login_required(role='BUSINESS', userID_field_name='buid')
     def post(self, buid):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -82,7 +82,7 @@ class Rstrs(Resource):
                     return {'message': 'Dish (id: %i) is not found' % (did)}, 404
                 menu.dishes.append(dish)
 
-            db.session.add(menu)     
+            db.session.add(menu)
             db.session.commit()
 
             return {'message': 'Add a new menu successfully.'}, 200
@@ -94,7 +94,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 修改菜单
-    @login_required(role='BUSSINESS', userID_field_name='buid')
+    @login_required(role='BUSINESS', userID_field_name='buid')
     def put(self, buid, menuId):
         try:
 
@@ -122,7 +122,7 @@ class Rstrs(Resource):
                 if dish is None:
                     return {'message': 'Dish (id: %i) is not found' % (did)}, 404
                 menu.dishes.append(dish)
-   
+
             db.session.add(menu)
             db.session.commit()
 

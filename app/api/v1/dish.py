@@ -9,9 +9,9 @@ api = Namespace('dish')
 @api.route('/')
 class Dishes(Resource):
 
-    @login_required(role='BUSSINES')
+    @login_required(role='BUSINESS')
     def post(self):
-        
+
         try:
             form = request.form
             name = form.get('name')
@@ -65,7 +65,7 @@ class Dishes(Resource):
 
 @api.route('/did/<int:did>')
 class Dishes(Resource):
-    
+
     @login_required(role='ANY')
     def get(self, did):
         dish = Dish.query.filter_by(id=did).first()
@@ -74,7 +74,7 @@ class Dishes(Resource):
 
         return dish.json(), 200
 
-    @login_required(role='BUSSINES')
+    @login_required(role='BUSINESS')
     def put(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -124,9 +124,9 @@ class Dishes(Resource):
             return {'message': 'Successfully update.', 'dishId': dish.id}, 200
         except Exception as e:
             print(e)
-            return {'message': 'Internal Server Error'}, 500  
+            return {'message': 'Internal Server Error'}, 500
 
-    @login_required(role='BUSSINES')
+    @login_required(role='BUSINESS')
     def delete(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -136,11 +136,11 @@ class Dishes(Resource):
         return {'message': 'Successfully delete.'}, 200
 
 @api.route('/category/<string:cat>')
-class Dishes(Resource): 
+class Dishes(Resource):
 
-    @login_required(role='ANY')    
+    @login_required(role='ANY')
     def get(self, cat):
-        
+
         try:
             if cat is None:
                 cat = 'other'

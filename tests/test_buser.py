@@ -11,7 +11,7 @@ class FlaskClientTest(unittest.TestCase):
 
         response = self.client.post('http://localhost:5000/api/buser/', data={"restId": 1,
             "username": "aaa",
-            "role": "BUSSINES",
+            "role": "BUSINESS",
             "password": "123",
             "authority": "MANAGER"})
 
@@ -23,7 +23,7 @@ class FlaskClientTest(unittest.TestCase):
     def test_register(self):
         response = self.client.post('http://localhost:5000/api/buser/', data={"restId": 1,
             "username": "aaabbb",
-            "role": "BUSSINES",
+            "role": "BUSINESS",
             "password": "123",
             "authority": "MANAGER"})
         self.assertTrue(response.status_code == 200)
@@ -33,7 +33,7 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaa",
             "restId": 1,
             "password": "123",
-            "role": "BUSSINES"
+            "role": "BUSINESS"
         })
         # print(response.json)
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
@@ -42,7 +42,7 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aada",
             "restId": 1,
             "password": "123",
-            "role": "BUSSINES"
+            "role": "BUSINESS"
         })
         # print(response.json)
         self.assertTrue("Username not exist." in response.get_data(as_text=True))
@@ -51,7 +51,7 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaa",
             "restId": 1,
             "password": "1dd23",
-            "role": "BUSSINES"
+            "role": "BUSINESS"
         })
         # print(response.json)
         self.assertTrue("Wrong password." in response.get_data(as_text=True))
@@ -64,7 +64,7 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaa",
             "restId": 1,
             "password": "123",
-            "role": "BUSSINES"
+            "role": "BUSINESS"
         })
 
         response = self.client.put('http://localhost:5000/api/buser/session')

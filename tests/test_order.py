@@ -19,7 +19,7 @@ class FlaskClientTest(unittest.TestCase):
 
         response = self.client.post('http://localhost:5000/api/buser/', data={"restId": 1,
             "username": "aaa",
-            "role": "BUSSINES",
+            "role": "BUSINESS",
             "password": "123",
             "authority": "MANAGER"})
         self.assertTrue(response.status_code == 200)
@@ -27,7 +27,7 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaa",
             "restId": 1,
             "password": "123",
-            "role": "BUSSINES"
+            "role": "BUSINESS"
         })
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
         for dish in self.dishes:
@@ -49,14 +49,14 @@ class FlaskClientTest(unittest.TestCase):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
-            
+
     def test_postOrder(self):
-        response = self.client.post('http://localhost:5000/api/order/cuid/2', 
+        response = self.client.post('http://localhost:5000/api/order/cuid/2',
                                 data=self.myorder1)
         self.assertTrue(200 == response.status_code)
 
     def test_getOrder(self):
-        response = self.client.post('http://localhost:5000/api/order/cuid/2', 
+        response = self.client.post('http://localhost:5000/api/order/cuid/2',
                                 data=self.myorder1)
         self.assertTrue(200 == response.status_code)
 
@@ -64,11 +64,11 @@ class FlaskClientTest(unittest.TestCase):
         self.assertTrue(200 == response.status_code)
 
     def test_payOrder(self):
-        response = self.client.post('http://localhost:5000/api/order/cuid/2', 
+        response = self.client.post('http://localhost:5000/api/order/cuid/2',
                                 data=self.myorder1)
         self.assertTrue(200 == response.status_code)
 
-        response = self.client.put('http://localhost:5000/api/order/cuid/2/oid/1', 
+        response = self.client.put('http://localhost:5000/api/order/cuid/2/oid/1',
                                 data={'payId': 100})
         self.assertTrue(200 == response.status_code)
 

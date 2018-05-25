@@ -20,8 +20,8 @@ class BUserRegister(Resource):
             if role is None:
                 return {'message': 'User role is required.'}, 400
 
-            if role != "BUSSINES":
-                return {'message': 'User role must be BUSSINES.'}, 400
+            if role != "BUSINESS":
+                return {'message': 'User role must be BUSINESS.'}, 400
 
             username = form.get('username')
             if username is None:
@@ -42,8 +42,12 @@ class BUserRegister(Resource):
             if rstr is None:
                 return {"message": "Restaurant not found."}, 404
 
-            buser = User(username=username, password=password, role=role, authority=authority, rstr_id=rstr_id)
-            db.session.add(buser)
+            buser = User.query.filter_by(username=username).first()
+            if buser is not None:
+                return {'message': 'Username exists.'}, 400
+
+            new_buser = User(username=username, password=password, role=role, authority=authority, rstr_id=rstr_id)
+            db.session.add(new_buser)
             db.session.commit()
 
             return {"message": "Successfully register."}, 200
@@ -55,7 +59,7 @@ class BUserRegister(Resource):
 @api.route('/<userId>')
 class BUserModifyPassword(Resource):
 
-    @login_required(role="BUSSINES")
+    @login_required(role="BUSINESS")
     def post(self):
         try:
             form = request.form
@@ -89,8 +93,8 @@ class BUserLog(Resource):
             if role is None:
                 return {'message': 'User role is required.'}, 400
 
-            if role != "BUSSINES":
-                return {'message': 'User role must be BUSSINES.'}, 400
+            if role != "BUSINESS":
+                return {'message': 'User role must be BUSINESS.'}, 400
 
             username = form.get('username')
             if username is None:
@@ -117,15 +121,13 @@ class BUserLog(Resource):
 
             login_user(buser)
 
-            # print(buser.id)
-
-            return {"message": "Successfully login."}, 200
+            return {"message": "Successfully login.", "buser_id": buser.id}, 200
 
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-    @login_required(role="BUSSINES")
+    @login_required(role="BUSINESS")
     def put(self):
         """Log out
         """

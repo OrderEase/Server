@@ -27,8 +27,12 @@ class User(db.Model, UserMixin):
 
         if self.role == 'BUSINESS':
             tmp = {
-
+                'id': self.id,
+                'username': self.username,
+                'role': self.role，
+                'authority': self.authority,
             }
+            return '{id}: 用户 {username}, 类型 {role}, 权限 {authority} '.format(**tmp)
 
     def json(self):
         return {

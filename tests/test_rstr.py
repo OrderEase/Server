@@ -20,7 +20,7 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.post('http://localhost:5000/api/buser/', data={
             "restId": 1,
             "username": "aaa",
-            "role": "BUSSINES",
+            "role": "BUSINESS",
             "password": "123",
             "authority": "MANAGER"})
         self.assertTrue(response.status_code == 200)
@@ -28,9 +28,11 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaa",
             "restId": 1,
             "password": "123",
-            "role": "BUSSINES"
+            "role": "BUSINESS"
         })
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
+
+        self.buser_id = response.json['buser_id']
 
         for dish in self.dishes:
             response = self.client.post('http://localhost:5000/api/dish/', data=dish)
@@ -47,23 +49,23 @@ class FlaskClientTest(unittest.TestCase):
     def test_modifyRstr(self):
         response = self.client.put('http://localhost:5000/api/rstr/buid/1',
                 data={
-                'name':'点都德', 
+                'name':'点都德',
                 'info': '茶楼'
                 })
-        print(response.status_code)
+        # print(response.status_code)
         self.assertTrue(200 == response.status_code)
 
     def test_postMenu(self):
         response = self.client.put('http://localhost:5000/api/rstr/buid/1',
                                     data={
-                                    'name':'点都德', 
+                                    'name':'点都德',
                                     'info': '茶楼'
                                     })
         self.assertTrue(200 == response.status_code)
 
         response = self.client.post('http://localhost:5000/api/rstr/buid/1/menu',
                                     data={
-                                    'name':'春季菜单', 
+                                    'name':'春季菜单',
                                     'dishes':'1,2,3,4'
                                     })
         self.assertTrue(200 == response.status_code)
@@ -71,21 +73,21 @@ class FlaskClientTest(unittest.TestCase):
     def test_putMenu(self):
         response = self.client.put('http://localhost:5000/api/rstr/buid/1',
                                     data={
-                                    'name':'点都德', 
+                                    'name':'点都德',
                                     'info': '茶楼'
                                     })
         self.assertTrue(200 == response.status_code)
 
         response = self.client.post('http://localhost:5000/api/rstr/buid/1/menu',
                                     data={
-                                    'name':'春季菜单', 
+                                    'name':'春季菜单',
                                     'dishes':'1,2,3,4'
                                     })
         self.assertTrue(200 == response.status_code)
 
         response = self.client.put('http://localhost:5000/api/rstr/buid/1/menu/1',
                                     data={
-                                    'name':'夏季菜单', 
+                                    'name':'夏季菜单',
                                     'dishes':'1,2'
                                     })
         self.assertTrue(200 == response.status_code)
@@ -93,18 +95,18 @@ class FlaskClientTest(unittest.TestCase):
     def test_getRstr(self):
         response = self.client.put('http://localhost:5000/api/rstr/buid/1',
                                     data={
-                                    'name':'点都德', 
+                                    'name':'点都德',
                                     'info': '茶楼'
                                     })
         self.assertTrue(200 == response.status_code)
 
         response = self.client.post('http://localhost:5000/api/rstr/buid/1/menu',
                                     data={
-                                    'name':'春季菜单', 
+                                    'name':'春季菜单',
                                     'dishes':'1,2,3,4'
                                     })
         self.assertTrue(200 == response.status_code)
 
         response = self.client.get('http://localhost:5000/api/rstr/')
         self.assertTrue(200 == response.status_code)
-            
+
