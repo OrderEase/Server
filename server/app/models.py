@@ -1,7 +1,29 @@
 from datetime import datetime, date
-from flask_sqlalchemy import SQLAlchemy
+from app import db
+from flask_login import UserMixin
 
-db = SQLAlchemy()
+class User(db.Model, UserMixin):
+
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), doc="用户名", unique=True)
+    password = db.Column(db.String(32), doc='密码', nullable=True)
+    role = db.Column(db.String(32), doc='用户类型')
+
+    def __repr__(self):
+        tmp = {
+            'id': self.id,
+            'username': self.username,
+            'role': self.role
+        }
+        return '{id}: 用户 {username}, 类型 {role} '.format(**tmp)
+
+    def json(self):
+        return {
+            'id': self.id
+        }
+
 
 orders_dishes = db.Table('orders_dishes',
     db.Column('order_id', db.Integer, db.ForeignKey('orders.id')),
@@ -45,7 +67,7 @@ class Order(db.Model):
         }
 
 class Dish(db.Model):
-    
+
     __tablename__ = 'dishes'
 
     id = db.Column(db.Integer, primary_key=True)

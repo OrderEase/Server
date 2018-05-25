@@ -1,2 +1,5 @@
 Flask
 flask-restplus
+flask-sqlalchemy
+flask-mysqldb
+flask-login
