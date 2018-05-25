@@ -28,14 +28,12 @@ class CuserLogin(Resource):
 			user = User.query.filter_by(username=username).first()
 
 			if user is None:
-				print("Create new user %s" % username)
 				new_user = User(username=username, password='', role="CUSTOMER")
 				db.session.add(new_user)
 				db.session.commit()
 				user = new_user
 
 			login_user(user)
-			print(current_user)
 			return {'message': 'Successfully login.'}, 200
 
 		except Exception as e:
