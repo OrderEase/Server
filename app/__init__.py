@@ -1,16 +1,13 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
-from models import Rstr
-
-
-db = SQLAlchemy()
+from app.models import db
 
 def create_app(test_config=None):
+
     app = Flask(__name__, instance_relative_config=True)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        print("ok")
         app.config.from_pyfile('config.py', silent=True)
     else:
         # load the test config if passed in
@@ -20,7 +17,14 @@ def create_app(test_config=None):
     db.init_app(app)
     db.create_all()
 
+    from app import login
+    login.init_app(app)
+
+    from app.api.v1 import myapi
+    myapi.init_app(app)
+
     # create a rstr
+    from app.models import Rstr
     rstr = Rstr.query.filter_by(id=1).first()
     if rstr is None:
         rstr = Rstr()
@@ -28,12 +32,6 @@ def create_app(test_config=None):
         rstr.name = 'default'
         rstr.info = 'default'
         db.session.add(rstr)
-        db.commit()
-
-    from app import login
-    login.init_app(app)
-
-    from app.api.v1 import myapi
-    myapi.init_app(app)
+        db.session.commit()
 
     return app

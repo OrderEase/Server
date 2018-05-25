@@ -2,12 +2,14 @@ from flask import request
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from app.models import Dish, db
+from app.login import login_required
 
 api = Namespace('dish')
 
 @api.route('/')
 class Dishes(Resource):
 
+    # @login_required(role='BUSSINES')
     def post(self):
         
         try:
@@ -63,6 +65,8 @@ class Dishes(Resource):
 
 @api.route('/did/<int:did>')
 class Dishes(Resource):
+    
+    # @login_required(role='ANY')
     def get(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -70,6 +74,7 @@ class Dishes(Resource):
 
         return dish.json(), 200
 
+    # @login_required(role='BUSSINES')
     def put(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -121,6 +126,7 @@ class Dishes(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500  
 
+    # @login_required(role='BUSSINES')
     def delete(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -130,7 +136,9 @@ class Dishes(Resource):
         return {'message': 'Successfully delete.'}, 200
 
 @api.route('/category/<string:cat>')
-class Dishes(Resource):     
+class Dishes(Resource): 
+
+    # @login_required(role='ANY')    
     def get(self, cat):
         
         try:

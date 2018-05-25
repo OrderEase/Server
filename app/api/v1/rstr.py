@@ -2,6 +2,7 @@ from flask import request
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from app.models import Rstr, db, Menu, Dish
+from app.login import login_required
 
 api = Namespace('rstr')
 
@@ -9,6 +10,7 @@ api = Namespace('rstr')
 class Rstrs(Resource):
 
     # 获取餐馆信息和菜单
+    # @login_required(role='BUSSINESS')
     def get(self):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -24,6 +26,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 修改餐馆信息
+    # @login_required(role='BUSSINESS', userID_field_name='buid')
     def put(self):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -53,6 +56,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 新建菜单
+    # @login_required(role='BUSSINESS', userID_field_name='buid')
     def post(self):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -90,6 +94,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 修改菜单
+    # @login_required(role='BUSSINESS', userID_field_name='buid')
     def put(self):
         try:
 
