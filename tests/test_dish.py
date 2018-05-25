@@ -58,7 +58,6 @@ class FlaskClientTest(unittest.TestCase):
         url = 'http://localhost:5000/api/dish/did/1'
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        # self.assertTrue(0 == int(res.json['likes']))
 
     def test_deleteDish(self):
         tmp_dish = self.dishes[0]
@@ -73,5 +72,3 @@ class FlaskClientTest(unittest.TestCase):
     def test_getDishByCat(self):
         response = self.client.get('http://localhost:5000/api/dish/category/荤菜')
         self.assertTrue(200 == response.status_code)
-
-    

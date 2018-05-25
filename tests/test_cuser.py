@@ -29,6 +29,7 @@ class FlaskClientTest(unittest.TestCase):
 
     def test_logout(self):
         response = self.client.put('http://localhost:5000/api/cuser/session')
+        # print(response.status_code)
         self.assertTrue('Login required.' in response.get_data(as_text=True))
 
         response = self.client.post('http://localhost:5000/api/cuser/session', data={

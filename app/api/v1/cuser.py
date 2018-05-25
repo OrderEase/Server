@@ -8,15 +8,12 @@ from app.login import login_required
 api = Namespace('cuser')
 
 @api.route('/session')
-class CuserLogin(Resource):
+class CuserLog(Resource):
 
 	def post(self):
 		''' log in '''
 		try:
 			form = request.form
-			username = form.get('username')
-			if username is None:
-				return {'message': 'Username is required.'}, 400
 
 			role = form.get('role')
 			if role is None:
@@ -25,15 +22,19 @@ class CuserLogin(Resource):
 			if role != "CUSTOMER":
 				return {'message': 'User role must be CUSTOMER.'}, 400
 
-			user = User.query.filter_by(username=username).first()
+			username = form.get('username')
+			if username is None:
+				return {'message': 'Username is required.'}, 400
 
-			if user is None:
+			cuser = User.query.filter_by(username=username).first()
+
+			if cuser is None:
 				new_user = User(username=username, password='', role="CUSTOMER")
 				db.session.add(new_user)
 				db.session.commit()
-				user = new_user
+				cuser = new_user
 
-			login_user(user)
+			login_user(cuser)
 			# print(current_user)
 			return {'message': 'Successfully login.'}, 200
 
