@@ -9,7 +9,7 @@ api = Namespace('dish')
 @api.route('/')
 class Dishes(Resource):
 
-    # @login_required(role='BUSSINES')
+    @login_required(role='BUSSINES')
     def post(self):
         
         try:
@@ -66,7 +66,7 @@ class Dishes(Resource):
 @api.route('/did/<int:did>')
 class Dishes(Resource):
     
-    # @login_required(role='ANY')
+    @login_required(role='ANY')
     def get(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -74,7 +74,7 @@ class Dishes(Resource):
 
         return dish.json(), 200
 
-    # @login_required(role='BUSSINES')
+    @login_required(role='BUSSINES')
     def put(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -126,7 +126,7 @@ class Dishes(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500  
 
-    # @login_required(role='BUSSINES')
+    @login_required(role='BUSSINES')
     def delete(self, did):
         dish = Dish.query.filter_by(id=did).first()
         if dish is None:
@@ -138,7 +138,7 @@ class Dishes(Resource):
 @api.route('/category/<string:cat>')
 class Dishes(Resource): 
 
-    # @login_required(role='ANY')    
+    @login_required(role='ANY')    
     def get(self, cat):
         
         try:

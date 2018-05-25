@@ -11,7 +11,8 @@ api = Namespace('order')
 @api.route('/cuid/<int:cuid>')
 class Orders(Resource):
 
-    # @login_required(role='CUSTOMER', userID_field_name='cuid')
+    # 新建订单
+    @login_required(role='CUSTOMER', userID_field_name='cuid')
     def post(self, cuid):
 
         try:
@@ -53,7 +54,7 @@ class Orders(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-    # @login_required(role='CUSTOMER', userID_field_name='cuid')
+    @login_required(role='CUSTOMER', userID_field_name='cuid')
     def get(self, cuid):
         try:
             orders =[]
@@ -70,7 +71,7 @@ class Orders(Resource):
 @api.route('/cuid/<int:cuid>/oid/<int:oid>')
 class Orders(Resource):
 
-    # @login_required(role='CUSTOMER', userID_field_name='cuid')
+    @login_required(role='CUSTOMER', userID_field_name='cuid')
     def put(self, cuid, oid):
 
         try:
@@ -97,7 +98,7 @@ class Orders(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-    # @login_required(role='CUSTOMER', userID_field_name='cuid')
+    @login_required(role='CUSTOMER', userID_field_name='cuid')
     def get(self, cuid, oid):
         try:
             order = Order.query.filter_by(id=oid).first()

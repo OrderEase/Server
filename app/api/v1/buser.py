@@ -117,6 +117,8 @@ class BUserLog(Resource):
 
             login_user(buser)
 
+            # print(buser.id)
+
             return {"message": "Successfully login."}, 200
 
         except Exception as e:
