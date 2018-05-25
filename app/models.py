@@ -12,15 +12,23 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), doc="用户名", unique=True)
     password = db.Column(db.String(32), doc='密码', nullable=True)
-    role = db.Column(db.String(32), doc='用户类型')
+    role = db.Column(db.String(32), doc='用户类型', nullable=False)
+    authority = db.Column(db.String(32), doc='商家权限', nullable=True)
+    rstr_id = db.Column(db.Integer, db.ForeignKey('rstr.id'), nullable=True)
 
     def __repr__(self):
-        tmp = {
-            'id': self.id,
-            'username': self.username,
-            'role': self.role
-        }
-        return '{id}: 用户 {username}, 类型 {role} '.format(**tmp)
+        if self.role == 'CUSTOMER':
+            tmp = {
+                'id': self.id,
+                'username': self.username,
+                'role': self.role
+            }
+            return '{id}: 用户 {username}, 类型 {role} '.format(**tmp)
+
+        if self.role == 'BUSINESS':
+            tmp = {
+
+            }
 
     def json(self):
         return {

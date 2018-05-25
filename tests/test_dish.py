@@ -44,8 +44,8 @@ class FlaskClientTest(unittest.TestCase):
             url = 'http://localhost:5000/api/dish/did/' + str(id)
             response = self.client.get(url)
             self.assertTrue(200 == response.status_code)
-            if id == 1:
-                print(dir(response))
+            # if id == 1:
+            #     print(dir(response))
 
     # def test_modifyDish(self):
     #     for dish in self.dishes:
@@ -80,4 +80,3 @@ class FlaskClientTest(unittest.TestCase):
     #     self.assertTrue(200 == response.status_code)
     #     # print(response.json)
 
-    
