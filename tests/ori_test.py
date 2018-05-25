@@ -1,6 +1,7 @@
 from dish_test import TestDish
 from order_test import TestOrder
 from rstr_test import TestRstr
+from cuser_test import TestCUser
 
 if __name__ == '__main__':
     # test_dish = TestDish()
@@ -18,4 +19,7 @@ if __name__ == '__main__':
     test_rstr = TestRstr()
     # test_rstr.modifyRstr()
     # test_rstr.postMenu()
-    test_rstr.getRstr()
+    # test_rstr.getRstr()
+
+    TestCUser()
+    # test_cuser
