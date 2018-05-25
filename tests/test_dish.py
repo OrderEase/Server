@@ -44,40 +44,34 @@ class FlaskClientTest(unittest.TestCase):
             url = 'http://localhost:5000/api/dish/did/' + str(id)
             response = self.client.get(url)
             self.assertTrue(200 == response.status_code)
-            if id == 1:
-                print(dir(response))
 
-    # def test_modifyDish(self):
-    #     for dish in self.dishes:
-    #         response = self.client.post('http://localhost:5000/api/dish/', data=dish)
-    #         self.assertTrue(200 == response.status_code)
+    def test_modifyDish(self):
+        for dish in self.dishes:
+            response = self.client.post('http://localhost:5000/api/dish/', data=dish)
+            self.assertTrue(200 == response.status_code)
 
-    #     new_dish = self.dishes[0]
-    #     new_dish['likes'] = 0
-    #     response = self.client.put('http://localhost:5000/api/dish/did/1', data=new_dish)
-    #     self.assertTrue(200 == response.status_code)
+        new_dish = self.dishes[0]
+        new_dish['likes'] = 0
+        response = self.client.put('http://localhost:5000/api/dish/did/1', data=new_dish)
+        self.assertTrue(200 == response.status_code)
 
-    #     id = int(response.json['dishId'])
-    #     url = 'http://localhost:5000/api/dish/did/' + str(id)
-    #     response = self.client.get(url)
-    #     self.assertTrue(200 == response.status_code)
-    #     # self.assertTrue(0 == int(res.json['likes']))
+        url = 'http://localhost:5000/api/dish/did/1'
+        response = self.client.get(url)
+        self.assertTrue(200 == response.status_code)
+        # self.assertTrue(0 == int(res.json['likes']))
 
-    # def test_deleteDish(self):
-    #     tmp_dish = self.dishes[0]
-    #     tmp_dish['name'] = '清蒸提莫'
-    #     response = self.client.post('http://localhost:5000/api/dish/', data=tmp_dish)
-    #     self.assertTrue(200 == response.status_code)
+    def test_deleteDish(self):
+        tmp_dish = self.dishes[0]
+        tmp_dish['name'] = '清蒸提莫'
+        response = self.client.post('http://localhost:5000/api/dish/', data=tmp_dish)
+        self.assertTrue(200 == response.status_code)
 
-    #     id = int(response.json['dishId'])
+        url = 'http://localhost:5000/api/dish/did/1'
+        response = self.client.delete(url)
+        self.assertTrue(200 == response.status_code)
 
-    #     url = 'http://localhost:5000/api/dish/did/' + str(id)
-    #     response = self.client.delete(url)
-    #     self.assertTrue(200 == response.status_code)
-
-    # def test_getDishByCat(self):
-    #     response = self.client.get('http://localhost:5000/api/dish/category/荤菜')
-    #     self.assertTrue(200 == response.status_code)
-    #     # print(response.json)
+    def test_getDishByCat(self):
+        response = self.client.get('http://localhost:5000/api/dish/category/荤菜')
+        self.assertTrue(200 == response.status_code)
 
     

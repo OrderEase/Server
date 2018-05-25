@@ -27,7 +27,7 @@ class Rstrs(Resource):
 
     # 修改餐馆信息
     # @login_required(role='BUSSINESS', userID_field_name='buid')
-    def put(self):
+    def put(self, buid):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
             if rstr is None:
@@ -57,7 +57,7 @@ class Rstrs(Resource):
 
     # 新建菜单
     # @login_required(role='BUSSINESS', userID_field_name='buid')
-    def post(self):
+    def post(self, buid):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
             if rstr is None:
@@ -95,15 +95,20 @@ class Rstrs(Resource):
 
     # 修改菜单
     # @login_required(role='BUSSINESS', userID_field_name='buid')
-    def put(self):
+    def put(self, buid, menuId):
         try:
 
             menu = Menu.query.filter_by(id=menuId).first()
             if menu is None:
                 return {'message': 'Menu not found'}, 404
 
+            db.session.delete(menu)
+
+            menu = Menu()
+            menu.id = menuId
             form = request.form
             name = form.get('name')
+            menu.rstr_id = 1
 
             tmp = Menu.query.filter_by(name=name).first()
             if tmp is not None:
@@ -112,13 +117,13 @@ class Rstrs(Resource):
             menu.name = name
 
             dishesId = list(map(int, form.get('dishes').strip().split(',')))
-            menu.dishes.clear()
             for did in dishesId:
                 dish = Dish.query.filter_by(id=did).first()
                 if dish is None:
                     return {'message': 'Dish (id: %i) is not found' % (did)}, 404
                 menu.dishes.append(dish)
    
+            db.session.add(menu)
             db.session.commit()
 
             return {'message': 'Modify a new menu successfully.'}, 200
