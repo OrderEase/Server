@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
+from models import Rstr
 
 
 db = SQLAlchemy()
@@ -18,6 +19,16 @@ def create_app(test_config=None):
     db.app = app
     db.init_app(app)
     db.create_all()
+
+    # create a rstr
+    rstr = Rstr.query.filter_by(id=1).first()
+    if rstr is None:
+        rstr = Rstr()
+        rstr.id = 1
+        rstr.name = 'default'
+        rstr.info = 'default'
+        db.session.add(rstr)
+        db.commit()
 
     from app import login
     login.init_app(app)
