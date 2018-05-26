@@ -75,7 +75,7 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.get('http://localhost:5000/api/order/cuid/2/oid/1')
         self.assertTrue(200 == response.status_code)
 
-    def test_getAll():
+    def test_getAll(self):
         response = self.client.post('http://localhost:5000/api/order/cuid/2',
                                 data=self.myorder1)
         self.assertTrue(200 == response.status_code)
