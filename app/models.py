@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
             tmp = {
                 'id': self.id,
                 'username': self.username,
-                'role': self.role，
+                'role': self.role,
                 'authority': self.authority,
             }
             return '{id}: 用户 {username}, 类型 {role}, 权限 {authority} '.format(**tmp)
@@ -63,8 +63,8 @@ class Order(db.Model):
 
     dishes = db.relationship('Dish', secondary=orders_dishes, lazy='dynamic',
         backref=db.backref('orders', lazy='dynamic'))
-    # uid = db.Column(db.Integer, db.ForeignKey('user.id'),
-    #     nullable=False)
+    uid = db.Column(db.Integer, db.ForeignKey('users.id'),
+        nullable=False)
 
     def __repr__(self):
         tmp = {

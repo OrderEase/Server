@@ -32,7 +32,7 @@ class FlaskClientTest(unittest.TestCase):
         })
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
 
-        self.buser_id = response.json['buser_id']
+        # self.buser_id = response.json['buser_id']
 
         for dish in self.dishes:
             response = self.client.post('http://localhost:5000/api/dish/', data=dish)

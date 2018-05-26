@@ -44,6 +44,7 @@ class Orders(Resource):
             order.isPay = isPay
             order.payWay = payWay
             order.payDate = payDate
+            order.uid = cuid
             for dish in dishes:
                 order.dishes.append(dish)
             db.session.add(order)
