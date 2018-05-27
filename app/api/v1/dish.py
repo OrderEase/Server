@@ -17,7 +17,7 @@ class Dishes(Resource):
             name = form.get('name')
             exist = Dish.query.filter_by(name=name).first()
             if exist is not None:
-                return {'message': 'Dish name already exist'}, 400
+                return {'message': 'Dish name already exist', 'dishId': exist.id}, 400
             if name is None:
                 return {'message': 'Dish name is required'}, 400
 
