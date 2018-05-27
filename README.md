@@ -40,3 +40,8 @@ Run all the unit tests:
 python manager.py test
 ```
 
+## How to add some dishes and menu when testing 2C without minding 2B
+run `temp/add.py`
+
+
+After that, four dishes would be added into the database, and a menu would be created and associated with the restaurant.
