@@ -2,7 +2,13 @@
 
 Test in python3.6.
 
-Create your own `instance/config.py` at root directory.
+To connect to your own DB, you should create your own `instance/config.py` at root directory, such as:
+
+```python
+SQLALCHEMY_DATABASE_URI="mysql://username:password@localhost:3306/test?charset=utf8"
+SQLALCHEMY_TRACK_MODIFICATIONS=True
+SECRET_KEY = 'Sdna2MshdG39DOA2skajd'
+```
 
 Create the virtual environmet:
 
