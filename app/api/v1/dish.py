@@ -35,7 +35,7 @@ class Dishes(Resource):
             if stock < 0:
                 return {'message': 'Stock can not be negative.'}, 400
 
-            avaliable = (form.get('avaliable') == 'True')
+            avaliable = (int(form.get('avaliable')) == 1)
 
             likes = int(form.get('likes'))
             if likes is None:
@@ -46,6 +46,10 @@ class Dishes(Resource):
             description = form.get('description')
             if description is None:
                 description = ""
+
+            img = form.get('img')
+            if stock is None:
+                img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
 
             dish = Dish()
             dish.name = name

@@ -96,6 +96,7 @@ class Dish(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
     category = db.Column(db.String(32), nullable=False)
+    img = db.Column(db.String(64), nullable=True)
     price = db.Column(db.Float, nullable=False)
     avaliable = db.Column(db.Boolean, default=0, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
@@ -115,8 +116,9 @@ class Dish(db.Model):
             'id': self.id,
             'name': self.name,
             'category': self.category,
+            'img': self.img,
             'price': self.price,
-            'avaliable': str(self.avaliable),
+            'avaliable': self.avaliable,
             'stock': self.stock,
             'likes': self.likes,
             'description': self.description
