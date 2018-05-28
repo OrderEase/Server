@@ -96,7 +96,7 @@ class Dish(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
     category = db.Column(db.String(32), nullable=False)
-    img = db.Column(db.String(64), nullable=True)
+    img = db.Column(db.String(256), nullable=True)
     price = db.Column(db.Float, nullable=False)
     avaliable = db.Column(db.Boolean, default=0, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
@@ -167,6 +167,7 @@ class Rstr(db.Model):
     name = db.Column(db.String(32), nullable=False)
     info = db.Column(db.String(256), nullable=False)
     menus = db.relationship('Menu', backref='rstr', lazy='dynamic')
+    cars = db.relationship('Carousel', backref='rstr', lazy='dynamic')
 
     def __repr__(self):
         tmp = {
@@ -178,9 +179,32 @@ class Rstr(db.Model):
 
     def json(self):
         menu = self.menus[0].json()
+        tmpcars = []
+        for car in self.cars:
+            tmpcars.append(car.json())
         return {
             'id': self.id,
             'name': self.name,
             'info': self.info,
+            'carousel': tmpcars,
             'menu': menu
+        }
+
+class Carousel(db.Model):
+
+    __tablename__ = 'carousel'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+    info = db.Column(db.String(256), nullable=False)
+    img = db.Column(db.String(256), nullable=False)
+
+    rstr_id = db.Column(db.Integer, db.ForeignKey('rstr.id'), nullable=False)
+
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'info': self.info,
+            'img': self.img
         }
