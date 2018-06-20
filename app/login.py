@@ -27,8 +27,13 @@ def login_required(authority="ANY", userID_field_name='userId'):
         def decorated_view(*args, **kwargs):
             if not current_user.is_authenticated:
                 return current_app.login_manager.unauthorized()
-            if ((current_user.authority != authority) and (authority != "ANY")):
-                return {'message': 'Your authority is not valid.'}, 401
+            if authority != "ANY":
+                if current_user.authority == 'customer' and authority != 'customer':
+                    return {'message': 'Your authority is not valid.'}, 401
+                if current_user.authority == 'cook' and authority != 'cook':
+                    return {'message': 'Your authority is not valid.'}, 401
+                if current_user.authority == 'manager' and authority == 'customer':
+                    return {'message': 'Your authority is not valid.'}, 401
             if (userID_field_name in kwargs.keys() and current_user.id != kwargs[userID_field_name]):
                 return {'message': 'You can only get your own infos.'}, 401
 
