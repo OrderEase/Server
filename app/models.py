@@ -10,29 +10,17 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), doc="用户名", unique=True)
+    username = db.Column(db.String(32), doc='用户名', unique=True)
     password = db.Column(db.String(32), doc='密码', nullable=True)
-    role = db.Column(db.String(32), doc='用户类型', nullable=False)
-    authority = db.Column(db.String(32), doc='商家权限', nullable=True)
-    rstr_id = db.Column(db.Integer, db.ForeignKey('rstr.id'), nullable=True)
+    authority = db.Column(db.String(32), doc='权限, [customer, manager, cook]', nullable=False)
 
     def __repr__(self):
-        if self.role == 'CUSTOMER':
-            tmp = {
-                'id': self.id,
-                'username': self.username,
-                'role': self.role
-            }
-            return '{id}: 用户 {username}, 类型 {role} '.format(**tmp)
-
-        if self.role == 'BUSINESS':
-            tmp = {
-                'id': self.id,
-                'username': self.username,
-                'role': self.role,
-                'authority': self.authority,
-            }
-            return '{id}: 用户 {username}, 类型 {role}, 权限 {authority} '.format(**tmp)
+        tmp = {
+            'id': self.id,
+            'username': self.username,
+            'authority': self.authority
+        }
+        return '{id}: 用户 {username}, 权限 {authority} '.format(**tmp)
 
     def json(self):
         return {
@@ -158,6 +146,73 @@ class Menu(db.Model):
             'name': self.name,
             'content': content
         }
+
+class Promotion(db.Model):
+
+    __tablename__ = 'promotion'
+
+    id = db.Column(db.Integer, primary_key=True)
+    theme = db.Column(db.String(32), nullable=False)
+    begin = db.Column(db.DateTime, nullable=False)
+    end = db.Column(db.DateTime, nullable=False)
+    isend = db.Column(db.Integer, nullable=False)
+
+    rules = db.relationship('Rule', backref='promotion', lazy='dynamic', cascade='all, delete-orphan', passive_deletes=True)
+
+    def __repr__(self):
+        tmp = {
+            'id': self.id,
+            'theme': self.theme,
+            'begin': self.begin.strftime("%Y-%m-%d %H:%M:%S"),
+            'end': self.end.strftime("%Y-%m-%d %H:%M:%S"),
+            'isend': self.isend
+        }
+        return 'id: {id}, 主题: {theme}, 开始时间: {begin}, 结束时间: {end}, 是否已结束: {isend}'.format(**tmp)
+
+    def json(self):
+        rules_list = []
+        for rule in self.rules.all():
+            rules_list.append(rule.json())
+
+        return {
+            'id': self.id,
+            'theme': self.theme,
+            'begin': self.begin.strftime("%Y-%m-%d %H:%M:%S"),
+            'end': self.end.strftime("%Y-%m-%d %H:%M:%S"),
+            'isend': self.isend,
+            'rules': rules_list
+        }
+
+
+class Rule(db.Model):
+
+    __tablename__ = 'rule'
+
+    id = db.Column(db.Integer, primary_key=True)
+    mode = db.Column(db.Integer, nullable=False)  # 1（满减），2（满折）
+    requirement = db.Column(db.Float, nullable=False)
+    discount = db.Column(db.Float, nullable=False)
+
+    promotion_id = db.Column(db.Integer, db.ForeignKey('promotion.id', ondelete='CASCADE'), nullable=False)
+
+    def __repr__(self):
+        tmp = {
+            'id': self.id,
+            'mode': '满减' if self.mode == 1 else '满折' if self.mode == 2 else 'error',
+            'requirement': self.requirement,
+            'discount': self.discount,
+            'promotion_id': self.promotion_id
+        }
+        return 'id: {id}, 优惠条件: {mode}, 要求: {requirement}, 优惠: {discount}, 对应优惠id: {promotion_id}'.format(**tmp)
+
+    def json(self):
+        return {
+            'id': self.id,
+            'mode': self.mode,
+            'requirement': self.requirement,
+            'discount': self.discount,
+        }
+
 
 class Rstr(db.Model):
 

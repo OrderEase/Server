@@ -55,29 +55,24 @@ class FlaskClientTest(unittest.TestCase):
         db.create_all()
         self.client = self.app.test_client()
 
-        response = self.client.post('http://localhost:5000/api/buser/', data={
-            "restId": 1,
+        response = self.client.post('http://localhost:5000/api/busers/', data={
             "username": "aaa",
-            "role": "BUSINESS",
             "password": "123",
-            "authority": "MANAGER"})
+            "authority": "manager"})
         self.assertTrue(response.status_code == 200)
-        response = self.client.post('http://localhost:5000/api/buser/session', data={
+
+        response = self.client.post('http://localhost:5000/api/busers/session', data={
             "username": "aaa",
-            "restId": 1,
             "password": "123",
-            "role": "BUSINESS"
         })
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
-
-        # self.buser_id = response.json['buser_id']
 
         for dish in self.dishes:
             response = self.client.post('http://localhost:5000/api/dish/', data=dish)
             self.assertTrue(200 == response.status_code)
 
     def tearDown(self):
-        response = self.client.put('http://localhost:5000/api/buser/session')
+        response = self.client.put('http://localhost:5000/api/busers/session')
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
         db.session.remove()

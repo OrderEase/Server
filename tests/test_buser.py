@@ -9,11 +9,11 @@ class FlaskClientTest(unittest.TestCase):
         db.create_all()
         self.client = self.app.test_client()
 
-        response = self.client.post('http://localhost:5000/api/buser/', data={"restId": 1,
+        # 注册测试用 buser
+        response = self.client.post('http://localhost:5000/api/busers/', data={
             "username": "aaa",
-            "role": "BUSINESS",
             "password": "123",
-            "authority": "MANAGER"})
+            "authority": "manager"})
 
     def tearDown(self):
         db.session.remove()
@@ -21,52 +21,43 @@ class FlaskClientTest(unittest.TestCase):
         self.app_context.pop()
 
     def test_register(self):
-        response = self.client.post('http://localhost:5000/api/buser/', data={"restId": 1,
+        response = self.client.post('http://localhost:5000/api/busers/', data={
             "username": "aaabbb",
-            "role": "BUSINESS",
-            "password": "123",
-            "authority": "MANAGER"})
+            "password": "1232",
+            "authority": "manager"})
         self.assertTrue(response.status_code == 200)
 
     def test_login(self):
-        response = self.client.post('http://localhost:5000/api/buser/session', data={
+        response = self.client.post('http://localhost:5000/api/busers/session', data={
             "username": "aaa",
-            "restId": 1,
-            "password": "123",
-            "role": "BUSINESS"
+            "password": "123"
         })
         # print(response.json)
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
 
-        response = self.client.post('http://localhost:5000/api/buser/session', data={
+        response = self.client.post('http://localhost:5000/api/busers/session', data={
             "username": "aada",
-            "restId": 1,
-            "password": "123",
-            "role": "BUSINESS"
+            "password": "123"
         })
         # print(response.json)
-        self.assertTrue("Username not exist." in response.get_data(as_text=True))
+        self.assertTrue("Invalid username or password." in response.get_data(as_text=True))
 
-        response = self.client.post('http://localhost:5000/api/buser/session', data={
+        response = self.client.post('http://localhost:5000/api/busers/session', data={
             "username": "aaa",
-            "restId": 1,
-            "password": "1dd23",
-            "role": "BUSINESS"
+            "password": "1dd23"
         })
         # print(response.json)
-        self.assertTrue("Wrong password." in response.get_data(as_text=True))
+        self.assertTrue("Invalid username or password." in response.get_data(as_text=True))
 
     def test_logout(self):
-        response = self.client.put('http://localhost:5000/api/buser/session')
+        response = self.client.put('http://localhost:5000/api/busers/session')
         self.assertTrue('Login required.' in response.get_data(as_text=True))
 
-        response = self.client.post('http://localhost:5000/api/buser/session', data={
+        response = self.client.post('http://localhost:5000/api/busers/session', data={
             "username": "aaa",
-            "restId": 1,
             "password": "123",
-            "role": "BUSINESS"
         })
 
-        response = self.client.put('http://localhost:5000/api/buser/session')
+        response = self.client.put('http://localhost:5000/api/busers/session')
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 

@@ -15,30 +15,23 @@ class FlaskClientTest(unittest.TestCase):
         self.app_context.pop()
 
     def test_login(self):
-        response = self.client.post('http://localhost:5000/api/cuser/session', data={
+        response = self.client.post('http://localhost:5000/api/cusers/session')
+        self.assertTrue('Username is required.' in response.get_data(as_text=True))
+
+        response = self.client.post('http://localhost:5000/api/cusers/session', data={
             "username": "dfd",
-            "role": "CUSTOMER"
         })
         self.assertTrue('Successfully login.' in response.get_data(as_text=True))
-
-        response = self.client.post('http://localhost:5000/api/cuser/session', data={
-            "username": "dddfd",
-            "role": "OTHERS"
-        })
-        self.assertTrue('User role must be CUSTOMER.' in response.get_data(as_text=True))
 
     def test_logout(self):
-        response = self.client.put('http://localhost:5000/api/cuser/session')
-        # print(response.status_code)
+        response = self.client.put('http://localhost:5000/api/cusers/session')
         self.assertTrue('Login required.' in response.get_data(as_text=True))
 
-        response = self.client.post('http://localhost:5000/api/cuser/session', data={
+        response = self.client.post('http://localhost:5000/api/cusers/session', data={
             "username": "dfaad",
-            "role": "CUSTOMER"
         })
         self.assertTrue('Successfully login.' in response.get_data(as_text=True))
 
-        response = self.client.put('http://localhost:5000/api/cuser/session')
-        # print(response.json)
+        response = self.client.put('http://localhost:5000/api/cusers/session')
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 

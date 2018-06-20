@@ -10,7 +10,7 @@ api = Namespace('rstr')
 class Rstrs(Resource):
 
     # 获取餐馆信息和菜单
-    @login_required(role='ANY')
+    @login_required(authority='ANY')
     def get(self):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -26,7 +26,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 修改餐馆信息
-    @login_required(role='BUSINESS', userID_field_name='buid')
+    @login_required(authority='manager', userID_field_name='buid')
     def put(self, buid):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -56,7 +56,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 新建菜单
-    @login_required(role='BUSINESS', userID_field_name='buid')
+    @login_required(authority='manager', userID_field_name='buid')
     def post(self, buid):
         try:
             rstr = Rstr.query.filter_by(id=1).first()
@@ -94,7 +94,7 @@ class Rstrs(Resource):
 class Rstrs(Resource):
 
     # 修改菜单
-    @login_required(role='BUSINESS', userID_field_name='buid')
+    @login_required(authority='manager', userID_field_name='buid')
     def put(self, buid, menuId):
         try:
 
