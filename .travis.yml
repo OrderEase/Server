@@ -1,0 +1,27 @@
+sudo: enabled
+
+language: python
+
+python:
+  - "3.6"
+
+os:
+  - linux
+
+services:
+  - mysql
+
+# install dependencies
+before_install:
+  - mysql -e 'CREATE DATABASE test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
+
+install:
+  - pip3 install -r requirements.txt
+
+before_script:
+  # - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n"
+  # - python manage.py runserver
+
+script:
+  - python manage.py test
+  - python manage.py test --coverage
