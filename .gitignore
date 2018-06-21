@@ -3,5 +3,7 @@ instance/
 tmp/
 **/__pycache__/
 .DS_Store
+.coveralls.yml
+.coverage
 
 !.gitignore
