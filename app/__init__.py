@@ -28,7 +28,7 @@ def create_app(test_config=None):
     from app.models import Restaurant
     restaurant = Restaurant.query.filter_by(id=1).first()
     if restaurant is None:
-        restaurant = restaurant()
+        restaurant = Restaurant()
         restaurant.id = 1
         restaurant.name = 'default'
         db.session.add(restaurant)
@@ -51,28 +51,30 @@ def create_app(test_config=None):
     # create fake restaurant
     restaurant = Restaurant.query.filter_by(id=-1).first()
     if restaurant is None:
-        restaurant = restaurant()
+        restaurant = Restaurant()
         restaurant.id = -1
         restaurant.name = 'fake'
         db.session.add(restaurant)
         db.session.commit()
-    
+
     # create fake menu
+    from app.models import Menu
     menu = Menu.query.filter_by(id=-1).first()
     if menu is None:
-        menu = menu()
+        menu = Menu()
         menu.id = -1
         menu.name = 'fake'
         menu.used = 0
         menu.delete = True
-        restId = -1
+        menu.restId = -1
         db.session.add(menu)
         db.session.commit()
-    
+
     # create fake category
+    from app.models import Category
     category = Category.query.filter_by(id=-1).first()
     if category is None:
-        category = category()
+        category = Category()
         category.rank = -1
         category.id = -1
         category.name = 'fake'

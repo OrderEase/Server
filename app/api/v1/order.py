@@ -20,7 +20,7 @@ class Orders(Resource):
             tableId = form.get('tableId')
             if tableId is None:
                 return {'message': 'Table\'s id is required'}, 400
-            
+
             isPay = 0
 
             total = 0
@@ -61,7 +61,7 @@ class Orders(Resource):
                 return {'message': 'Total is required'}, 400
             if t_total != total:
                 return {'message': 'Total is wrong, check it!'}, 400
-            
+
             t_due = form.get('due')
             if t_due is None:
                 return {'message': 'Due is required'}, 400
@@ -156,11 +156,11 @@ class Orders(Resource):
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
-    
+
     # 用户修改订单
     @login_required(authority='customer')
     def get(self, oid):
-        
+
         try:
             order = Order.query.filter_by(id=oid).first()
             if order is None:
@@ -177,7 +177,7 @@ class Orders(Resource):
             except Exception as e:
                 print(e)
                 return {'message': 'Wrong dish id'}, 400
-            
+
             items = order.items
             found = False
             for item in items:
@@ -212,15 +212,15 @@ class Orders(Resource):
                                 'message': 'Urge should be 0 or 1, 1 means urge'
                                 }, 400
                         item.urge = urge
-                    
+
                     db.session.commit()
                     break
-            
+
             if found is False:
                 return {'message': 'Dish not found'}, 404
             else:
                 return {'message': 'Successfully modify.'}, 200
-                        
+
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
@@ -234,6 +234,8 @@ class Orders(Resource):
     def put(self, oid):
 
         order = Order.query.filter_by(id=oid).first()
+
+        try:
             if order is None:
                 return {'message': 'Order not found'}, 404
 
@@ -246,7 +248,7 @@ class Orders(Resource):
             except Exception as e:
                 print(e)
                 return {'message': 'Wrong dish id'}, 400
-            
+
             items = order.items
             found = False
             for item in items:
@@ -281,10 +283,10 @@ class Orders(Resource):
                                 'message': 'Wrong date-time format'
                                 }, 400
                         item.time = time
-                                       
+
                     db.session.commit()
                     break
-            
+
             finished = 1
             for item in items:
                 if item.finished == 0:
@@ -297,7 +299,7 @@ class Orders(Resource):
                 return {'message': 'Dish not found'}, 404
             else:
                 return {'message': 'Successfully modify.'}, 200
-                        
+
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
@@ -305,7 +307,7 @@ class Orders(Resource):
     # 商家获取单个订单
     @login_required(authority='cook')
     def get(self, oid):
-        
+
         try:
             order = Order.query.filter_by(id=oid).first()
 
@@ -326,7 +328,7 @@ class Orders(Resource):
     def get(self):
         try:
             orders = Order.query.all()
-            
+
             ret = []
             for order in orders:
                 ret.append(order.json())

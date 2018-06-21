@@ -41,7 +41,7 @@ class Order(db.Model):
     total = db.Column(db.Float, nullable=False)
     due = db.Column(db.Float, nullable=False)
     isPay = db.Column(db.Integer, default=0, nullable=False)
-    payId = db.Column(db.String, nullable=True)
+    payId = db.Column(db.String(32), nullable=True)
     payWay = db.Column(db.String(32), nullable=True)
     payDate = db.Column(db.DateTime, nullable=True)
     finished = db.Column(db.Integer, default=0, nullable=False)
@@ -88,7 +88,7 @@ class Order(db.Model):
         }
 
 class OrderItem(db.Model):
-    
+
     __tablename__ = 'orderItems'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -107,8 +107,7 @@ class OrderItem(db.Model):
             'orderId': self.orderId,
             'dishId': self.dishId
         }
-        return 'item {id}, order: {orderId}, dishId: {dishId}'
-                .format(**tmp)
+        return 'item {id}, order: {orderId}, dishId: {dishId}'.format(**tmp)
 
     def json(self):
         return {
@@ -131,7 +130,7 @@ class Dish(db.Model):
     rank = db.Column(db.Integer, nullable=False)
     img = db.Column(db.String(256), nullable=True)
     price = db.Column(db.Float, nullable=False)
-    avaliable = db.Column(db.integer, default=0, nullable=False)
+    avaliable = db.Column(db.Integer, default=0, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
     likes = db.Column(db.Integer, default=0, nullable=False)
     description = db.Column(db.String(500), nullable=False)
@@ -167,7 +166,7 @@ class Dish(db.Model):
         }
 
 class Category(db.Model):
-    
+
     __tablename__ = 'categories'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -206,11 +205,11 @@ class Menu(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    used = db.Column(db.integer, default=0, nullable=False)
+    used = db.Column(db.Integer, default=0, nullable=False)
     delete = db.Column(db.Boolean, default=False, nullable=False)
 
     cats = db.relationship('Category', backref='menus', lazy='dynamic')
-    restId = db.Column(db.Integer, db.ForeignKey('restaurant.id'), 
+    restId = db.Column(db.Integer, db.ForeignKey('restaurant.id'),
                         nullable=False)
 
     def __repr__(self):

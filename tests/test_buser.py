@@ -25,6 +25,7 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaabbb",
             "password": "1232",
             "authority": "manager"})
+        # print(response.get_data(as_text=True))
         self.assertTrue(response.status_code == 200)
 
     def test_login(self):
@@ -32,14 +33,14 @@ class FlaskClientTest(unittest.TestCase):
             "username": "aaa",
             "password": "123"
         })
-        # print(response.json)
+        # print(response.get_data(as_text=True))
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
 
         response = self.client.post('http://localhost:5000/api/busers/session', data={
             "username": "aada",
             "password": "123"
         })
-        # print(response.json)
+        # print(response.get_data(as_text=True))
         self.assertTrue("Invalid username or password." in response.get_data(as_text=True))
 
         response = self.client.post('http://localhost:5000/api/busers/session', data={

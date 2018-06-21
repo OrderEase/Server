@@ -1,7 +1,7 @@
 from flask import request, g
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
-from app.models import User, Rstr, db
+from app.models import User, Restaurant, db
 from flask_login import login_user, logout_user, current_user
 from app.login import login_required
 

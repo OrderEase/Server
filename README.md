@@ -1,3 +1,6 @@
+# OrderEase Server
+[![Build Status](https://travis-ci.org/YHJRUBY/OrderEase-Server.svg?branch=master)](https://travis-ci.org/YHJRUBY/OrderEase-Server)
+
 ## How to run
 
 Test in python3.6.
@@ -19,25 +22,25 @@ python -m venv venv
 Activate the virtual environment:
 
 ```shell
-. venv/bin/activate 
+. venv/bin/activate
 ```
 
 Install dependencies:
 
 ```shell
-pip install -r requirements.txt 
+pip install -r requirements.txt
 ```
 
 Start the server:
 
 ```shell
-python manager.py runserver
+python manage.py runserver
 ```
 
 Run all the unit tests:
 
 ```python
-python manager.py test
+python manage.py test
 ```
 
 ## How to add some dishes and menu when testing 2C without minding 2B
