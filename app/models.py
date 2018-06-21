@@ -40,13 +40,8 @@ class User(db.Model, UserMixin):
         }
 
 orders_dishes = db.Table('orders_dishes',
-    db.Column('order_id', db.Integer, db.ForeignKey('orders.id')),
-    db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'))
-)
-
-menu_dishes = db.Table('menu_dishes',
-    db.Column('menu_id', db.Integer, db.ForeignKey('menu.id')),
-    db.Column('dish_id', db.Integer, db.ForeignKey('dishes.id'))
+    db.Column('orderId', db.Integer, db.ForeignKey('orders.id')),
+    db.Column('dishId', db.Integer, db.ForeignKey('dishes.id'))
 )
 
 class Order(db.Model):
@@ -57,27 +52,40 @@ class Order(db.Model):
     tableId = db.Column(db.String(32), nullable=False)
     total = db.Column(db.Float, nullable=False)
     due = db.Column(db.Float, nullable=False)
-    isPay = db.Column(db.Boolean, default=0, nullable=False)
-    payWay = db.Column(db.String(32), nullable=False)
-    payDate = db.Column(db.DateTime, nullable=False)
+    isPay = db.Column(db.Integer, default=0, nullable=False)
+    payId = db.Column(db.String, nullable=True)
+    payWay = db.Column(db.String(32), nullable=True)
+    payDate = db.Column(db.DateTime, nullable=True)
+    finished = db.Column(db.Integer, default=0, nullable=False)
 
     dishes = db.relationship('Dish', secondary=orders_dishes, lazy='dynamic',
         backref=db.backref('orders', lazy='dynamic'))
     uid = db.Column(db.Integer, db.ForeignKey('users.id'),
         nullable=False)
+    items = db.relationship('OrderItem', backref='orders', lazy='dynamic')
 
     def __repr__(self):
         tmp = {
             'payDate': self.payDate.strftime("%Y-%m-%d %H:%M:%S"),
             'id': self.id,
-            'tableId': self.tableId
+            'due': self.due,
+            'total': self.total,
+            'isPay': self.isPay,
+            'payWay': self.payWay,
+            'finished': self.finished
         }
-        return '{payDate}: 订单 {id}, 座位 {tableId} '.format(**tmp)
+        return ('{payDate}: order {id}, due is {due}, total is {total}\n'
+                'isPay: {isPay}').format(**tmp)
 
     def json(self):
         t_dishes = []
         for dish in self.dishes:
             t_dishes.append(dish.json())
+
+        t_orderItems = []
+        for item in self.items:
+            t_orderItems.append(item.json())
+
         return {
             'id': self.id,
             'tableId': self.tableId,
@@ -86,7 +94,44 @@ class Order(db.Model):
             'isPay': self.isPay,
             'payWay': str(self.payWay),
             'payDate': self.payDate.strftime("%Y-%m-%d %H:%M:%S"),
-            'dishes': t_dishes
+            'payId': self.payId,
+            'dishes': t_dishes,
+            'orderItems': t_orderItems
+        }
+
+class OrderItem(db.Model):
+    
+    __tablename__ = 'orderItems'
+
+    id = db.Column(db.Integer, primary_key=True)
+    orderId = db.Column(db.Integer, db.ForeignKey('orders.id'),
+        nullable=False)
+    dishId = db.Column(db.Integer, db.ForeignKey('dishes.id'))
+    quantity = db.Column(db.Integer, nullable=False)
+    finished = db.Column(db.Integer, default=0, nullable=False)
+    time = db.Column(db.DateTime, nullable=True)
+    urge = db.Column(db.Integer, default=0, nullable=False)
+    like = db.Column(db.Integer, default=0, nullable=False)
+
+    def __repr__(self):
+        tmp = {
+            'id': self.id,
+            'orderId': self.orderId,
+            'dishId': self.dishId
+        }
+        return 'item {id}, order: {orderId}, dishId: {dishId}'
+                .format(**tmp)
+
+    def json(self):
+        return {
+            'id': self.id,
+            'orderId': self.orderId,
+            'dishId': self.dishId,
+            'quantity': self.quantity,
+            'finished': self.finished,
+            'time': self.time.strftime("%Y-%m-%d %H:%M:%S"),
+            'urge': self.urge,
+            'like': self.like
         }
 
 class Dish(db.Model):
@@ -95,27 +140,36 @@ class Dish(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    category = db.Column(db.String(32), nullable=False)
+    rank = db.Column(db.Integer, nullable=False)
     img = db.Column(db.String(256), nullable=True)
     price = db.Column(db.Float, nullable=False)
-    avaliable = db.Column(db.Boolean, default=0, nullable=False)
+    avaliable = db.Column(db.integer, default=0, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
-    likes = db.Column(db.Integer, nullable=False)
+    likes = db.Column(db.Integer, default=0, nullable=False)
     description = db.Column(db.String(500), nullable=False)
+    delete = db.Column(db.Boolean, default=False, nullable=False)
+
+    catId = db.Column(db.Integer, db.ForeignKey('categories.id'),
+                        nullable=False)
 
     def __repr__(self):
         tmp = {
             'id': self.id,
             'name': self.name,
-            'price': self.price
+            'price': self.price,
+            'avaliable': self.avaliable,
+            'stock': self.stock,
+            'likes': self.likes,
+            'description': self.description
         }
-        return 'id: {id}, 菜名: {name}, 价格: {price} '.format(**tmp)
+        return ('id: {id}, name: {name}, price: {price}\n'
+                'avaliable: {avaliable}, stock: {stock}, likes: {likes}\n'
+                'description: {description}').format(**tmp)
 
     def json(self):
         return {
             'id': self.id,
             'name': self.name,
-            'category': self.category,
             'img': self.img,
             'price': self.price,
             'avaliable': self.avaliable,
@@ -124,70 +178,114 @@ class Dish(db.Model):
             'description': self.description
         }
 
-class Menu(db.Model):
-
-    __tablename__ = 'menu'
+class Category(db.Model):
+    
+    __tablename__ = 'categories'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    dishes = db.relationship('Dish', secondary=menu_dishes, lazy='dynamic',
-        backref=db.backref('menu', lazy='dynamic'))
+    rank = db.Column(db.Integer, nullable=False)
+    delete = db.Column(db.Boolean, default=False, nullable=False)
 
-    rstr_id = db.Column(db.Integer, db.ForeignKey('rstr.id'), nullable=False)
+    dishes = db.relationship('Dish', backref='categories', lazy='dynamic')
+
+    menuId = db.Column(db.Integer, db.ForeignKey('menus.id'),
+                        nullable=False)
 
     def __repr__(self):
         tmp = {
             'id': self.id,
             'name': self.name,
+            'rank': self.rank
         }
-        return 'id: {id}, 菜单: {name}'.format(**tmp)
+        return 'id: {id}, name: {name}, rank: {rank}'.format(**tmp)
+
+    def json(self):
+        t_dishes = []
+        for dish in self.dishes:
+            t_dishes.append(dish.json())
+
+        return {
+            'id': self.id,
+            'name': self.name,
+            'rank': self.rank,
+            'dishes': self.t_dishes
+        }
+
+class Menu(db.Model):
+
+    __tablename__ = 'menus'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), nullable=False)
+    used = db.Column(db.integer, default=0, nullable=False)
+    delete = db.Column(db.Boolean, default=False, nullable=False)
+
+    cats = db.relationship('Category', backref='menus', lazy='dynamic')
+    restId = db.Column(db.Integer, db.ForeignKey('restaurant.id'), 
+                        nullable=False)
+
+    def __repr__(self):
+        tmp = {
+            'id': self.id,
+            'name': self.name,
+            'used': self.used
+        }
+        return 'id: {id}, name: {name}, used: {uesed}'.format(**tmp)
 
     def json(self):
         content = []
-        category = {}
-        for dish in self.dishes:
-            if dish.category in category.keys():
-                category[dish.category].append(dish.json())
-            else:
-                category[dish.category] = [dish.json()]
+        for cat in self.cats:
+            content.append(cat.json())
 
-        for cat in category:
-            content.append({'category':cat, 'dishes':category[cat]})
         return {
             'id': self.id,
             'name': self.name,
+            'used': self.used,
             'content': content
         }
 
-class Rstr(db.Model):
+class Restaurant(db.Model):
 
-    __tablename__ = 'rstr'
+    __tablename__ = 'restaurant'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(32), nullable=False)
-    info = db.Column(db.String(256), nullable=False)
-    menus = db.relationship('Menu', backref='rstr', lazy='dynamic')
-    cars = db.relationship('Carousel', backref='rstr', lazy='dynamic')
+    img = db.Column(db.String(256), nullable=True)
+    open = db.Column(db.DateTime, nullable=True)
+    close = db.Column(db.DateTime, nullable=True)
+
+    menus = db.relationship('Menu', backref='restaurant',
+                lazy='dynamic')
+    cars = db.relationship('Carousel', backref='restaurant',
+                lazy='dynamic')
 
     def __repr__(self):
         tmp = {
             'id': self.id,
             'name': self.name,
-            'info': self.info
+            'open': self.open.strftime("%Y-%m-%d %H:%M:%S"),
+            'close': self.close.strftime("%Y-%m-%d %H:%M:%S")
         }
-        return 'id: {id}, 餐馆: {name}, 说明: {info} '.format(**tmp)
+        return ('id: {id}, name: {name}, open: {open}\n'
+                'close: {close}').format(**tmp)
 
     def json(self):
-        menu = self.menus[0].json()
-        tmpcars = []
+        t_menus = []
+        for menu in self.menus:
+            t_menus.append(menu.json())
+
+        t_cars = []
         for car in self.cars:
-            tmpcars.append(car.json())
+            t_cars.append(car.json())
+
         return {
             'id': self.id,
             'name': self.name,
-            'info': self.info,
-            'carousel': tmpcars,
-            'menu': menu
+            'open': self.open.strftime("%Y-%m-%d %H:%M:%S"),
+            'close': self.close.strftime("%Y-%m-%d %H:%M:%S"),
+            'carousels': t_cars,
+            'menus': t_menus
         }
 
 class Carousel(db.Model):
@@ -195,16 +293,15 @@ class Carousel(db.Model):
     __tablename__ = 'carousel'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32), nullable=False)
     info = db.Column(db.String(256), nullable=False)
     img = db.Column(db.String(256), nullable=False)
 
-    rstr_id = db.Column(db.Integer, db.ForeignKey('rstr.id'), nullable=False)
+    restId = db.Column(db.Integer, db.ForeignKey('restaurant.id'),
+                nullable=False)
 
     def json(self):
         return {
             'id': self.id,
-            'name': self.name,
             'info': self.info,
             'img': self.img
         }

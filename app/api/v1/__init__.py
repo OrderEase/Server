@@ -9,12 +9,12 @@ myapi = Api(
 
 from .buser import api as buser_api
 from .cuser import api as cuser_api
-from .dish import api as dish_api
+from .menus import api as menus_api
 from .order import api as order_api
-from .rstr import api as rstr_api
+from .restrt import api as restrt_api
 
 myapi.add_namespace(buser_api, path='/api/buser')
 myapi.add_namespace(cuser_api, path='/api/cuser')
-myapi.add_namespace(dish_api, path='/api/dish')
-myapi.add_namespace(order_api, path='/api/order')
-myapi.add_namespace(rstr_api, path='/api/rstr')
+myapi.add_namespace(menus_api, path='/api/menus')
+myapi.add_namespace(order_api, path='/api/orders')
+myapi.add_namespace(restrt_api, path='/api/restrt')

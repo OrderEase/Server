@@ -24,20 +24,19 @@ def create_app(test_config=None):
     from app.api.v1 import myapi
     myapi.init_app(app)
 
-    # create a rstr
-    from app.models import Rstr
-    rstr = Rstr.query.filter_by(id=1).first()
-    if rstr is None:
-        rstr = Rstr()
-        rstr.id = 1
-        rstr.name = 'default'
-        rstr.info = 'default'
-        db.session.add(rstr)
+    # create a restaurant
+    from app.models import Restaurant
+    restaurant = Restaurant.query.filter_by(id=1).first()
+    if restaurant is None:
+        restaurant = restaurant()
+        restaurant.id = 1
+        restaurant.name = 'default'
+        db.session.add(restaurant)
         db.session.commit()
 
     # add 3 default carousels
     from app.models import Carousel
-    car = Carousel.query.filter_by(rstr_id=1).first()
+    car = Carousel.query.filter_by(restId=1).first()
     if car is None:
         for i in range(1, 4):
             car = Carousel()
@@ -45,8 +44,41 @@ def create_app(test_config=None):
             car.name = 'default'
             car.info = 'default'
             car.img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
-            car.rstr_id = 1
+            car.restId = 1
             db.session.add(car)
             db.session.commit()
+
+    # create fake restaurant
+    restaurant = Restaurant.query.filter_by(id=-1).first()
+    if restaurant is None:
+        restaurant = restaurant()
+        restaurant.id = -1
+        restaurant.name = 'fake'
+        db.session.add(restaurant)
+        db.session.commit()
+    
+    # create fake menu
+    menu = Menu.query.filter_by(id=-1).first()
+    if menu is None:
+        menu = menu()
+        menu.id = -1
+        menu.name = 'fake'
+        menu.used = 0
+        menu.delete = True
+        restId = -1
+        db.session.add(menu)
+        db.session.commit()
+    
+    # create fake category
+    category = Category.query.filter_by(id=-1).first()
+    if category is None:
+        category = category()
+        category.rank = -1
+        category.id = -1
+        category.name = 'fake'
+        category.delete = True
+        category.menuId = -1
+        db.session.add(category)
+        db.session.commit()
 
     return app
