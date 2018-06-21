@@ -1,5 +1,6 @@
 # OrderEase Server
 [![Build Status](https://travis-ci.org/OrderEase/Server.svg?branch=master)](https://travis-ci.org/OrderEase/Server)
+[![Coverage Status](https://coveralls.io/repos/github/YHJRUBY/OrderEase-Server/badge.svg?branch=master)](https://coveralls.io/github/YHJRUBY/OrderEase-Server?branch=master)
 
 ## How to run
 
