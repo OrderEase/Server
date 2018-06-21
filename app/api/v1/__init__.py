@@ -18,3 +18,7 @@ myapi.add_namespace(cuser_api, path='/api/cuser')
 myapi.add_namespace(menus_api, path='/api/menus')
 myapi.add_namespace(order_api, path='/api/orders')
 myapi.add_namespace(restrt_api, path='/api/restrt')
+
+from .rule import api as rule_api
+from .promotion import api as promotion_api
+myapi.add_namespace(promotion_api, path='/api/promotions')

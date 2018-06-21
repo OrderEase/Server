@@ -5,7 +5,7 @@ from flask_restplus import Namespace, Resource
 from flask_login import login_user, logout_user, current_user
 from app.login import login_required
 
-api = Namespace('cuser')
+api = Namespace('cusers')
 
 @api.route('/session')
 class CuserLog(Resource):
@@ -15,13 +15,6 @@ class CuserLog(Resource):
 		try:
 			form = request.form
 
-			role = form.get('role')
-			if role is None:
-				return {'message': 'User role is required.'}, 400
-
-			if role != "CUSTOMER":
-				return {'message': 'User role must be CUSTOMER.'}, 400
-
 			username = form.get('username')
 			if username is None:
 				return {'message': 'Username is required.'}, 400
@@ -29,13 +22,12 @@ class CuserLog(Resource):
 			cuser = User.query.filter_by(username=username).first()
 
 			if cuser is None:
-				new_user = User(username=username, password='', role="CUSTOMER")
+				new_user = User(username=username, password='', authority="customer")
 				db.session.add(new_user)
 				db.session.commit()
 				cuser = new_user
 
 			login_user(cuser)
-			# print(current_user)
 			return {'message': 'Successfully login.'}, 200
 
 		except Exception as e:
@@ -43,7 +35,7 @@ class CuserLog(Resource):
 			return {'message': 'Internal Server Error'}, 500
 
 
-	@login_required(role="CUSTOMER")
+	@login_required(authority="customer")
 	def put(self):
 		''' log out '''
 		logout_user()
