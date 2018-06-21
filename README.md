@@ -1,5 +1,5 @@
 # OrderEase Server
-[![Build Status](https://travis-ci.org/YHJRUBY/OrderEase-Server.svg?branch=master)](https://travis-ci.org/YHJRUBY/OrderEase-Server)
+[![Build Status](https://travis-ci.org/OrderEase/Server.svg?branch=master)](https://travis-ci.org/OrderEase/Server)
 
 ## How to run
 
