@@ -1,8 +1,9 @@
 # OrderEase Server
+![Progress](http://progressed.io/bar/50?title=completed)
 [![Build Status](https://travis-ci.org/OrderEase/Server.svg?branch=master)](https://travis-ci.org/OrderEase/Server)
 [![Coverage Status](https://coveralls.io/repos/github/OrderEase/Server/badge.svg?branch=master)](https://coveralls.io/github/OrderEase/Server?branch=master)
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)
-
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
 ## How to run
 
