@@ -159,6 +159,7 @@ class Dish(db.Model):
             'id': self.id,
             'name': self.name,
             'img': self.img,
+            'rank': self.rank,
             'price': self.price,
             'avaliable': self.avaliable,
             'stock': self.stock,
@@ -197,7 +198,7 @@ class Category(db.Model):
             'id': self.id,
             'name': self.name,
             'rank': self.rank,
-            'dishes': self.t_dishes
+            'dishes': t_dishes
         }
 
 class Menu(db.Model):

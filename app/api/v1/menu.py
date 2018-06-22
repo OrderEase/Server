@@ -96,7 +96,7 @@ class Menus(Resource):
     @login_required(authority='customer')
     def get(self, menuid):
         menu = Menu.query.filter_by(id=menuid).first()
-        if menu is None:
+        if menu is None or menu.delete is True:
             return {'message': 'Menu not found'}, 404
 
         return menu.json(), 200
@@ -105,7 +105,7 @@ class Menus(Resource):
     @login_required(authority='manager')
     def put(self, menuid):
         menu = Menu.query.filter_by(id=menuid).first()
-        if menu is None:
+        if menu is None or menu.delete is True:
             return {'message': 'Menu not found'}, 404
 
         try:
@@ -113,15 +113,6 @@ class Menus(Resource):
             name = form.get('name')
             if name is not None:
                 menu.name = name
-
-            rank = form.get('rank')
-            if rank is not None:
-                try:
-                    rank = int(rank)
-                except Exception as e:
-                    print(e)
-                    return {'message': 'Rank should be integer'}, 400
-                menu.rank = rank
 
             used = form.get('used')
             if used is not None:
@@ -145,7 +136,7 @@ class Menus(Resource):
     @login_required(authority='manager')
     def delete(self, menuid):
         menu = Menu.query.filter_by(id=menuid).first()
-        if menu is None:
+        if menu is None or menu.delete is True:
             return {'message': 'Menu not found'}, 404
         
         menu.delete = True
@@ -154,7 +145,7 @@ class Menus(Resource):
         return {'message': 'Successfully delete.'}, 200
 
 # Category
-@api.route('/<menuid>/categories')
+@api.route('/<int:menuid>/categories/')
 class Categories(Resource):
 
     #新建类别
@@ -193,7 +184,7 @@ class Categories(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-@api.route('/<menuid>/categories/<catid>')
+@api.route('/<int:menuid>/categories/<int:catid>')
 class Categories(Resource):
 
     #删除类别
@@ -201,7 +192,7 @@ class Categories(Resource):
     def delete(self, menuid, catid):
 
         category = Category.query.filter_by(id=catid).first()
-        if category is None:
+        if category is None or category.delete is True:
             return {'message': 'Category not found'}, 404
         
         if category.menuId != menuid:
@@ -218,7 +209,7 @@ class Categories(Resource):
 
         try:
             category = Category.query.filter_by(id=catid).first()
-            if category is None:
+            if category is None or category.delete is True:
                 return {'message': 'Category not found'}, 404
             
             if category.menuId != menuid:
@@ -249,7 +240,7 @@ class Categories(Resource):
             return {'message': 'Internal Server Error'}, 500
 
 # Dish
-@api.route('/<menuid>/categories/<catid>/dishes/')
+@api.route('/<int:menuid>/categories/<int:catid>/dishes/')
 class Dishes(Resource):
     
     # 新建菜品
@@ -258,7 +249,7 @@ class Dishes(Resource):
 
         try:
             category = Category.query.filter_by(id=catid).first()
-            if category is None:
+            if category is None or category.delete is True:
                 return {'message': 'Bad category'}, 400
             
             if category.menuId != menuid:
@@ -342,7 +333,7 @@ class Dishes(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-@api.route('/<menuid>/categories/<catid>/dishes/<dishid>')
+@api.route('/<int:menuid>/categories/<int:catid>/dishes/<int:dishid>')
 class Dishes(Resource):
     
     # 修改菜品
@@ -351,13 +342,13 @@ class Dishes(Resource):
 
         try:
             dish = Dish.query.filter_by(id=dishid).first()
-            if dish is None:
+            if dish is None or dish.delete is True:
                 return {'message': 'Dish not found'}, 404
             if dish.catId != catid:
                 return {'message': 'Bad category'}, 400
 
             category = Category.query.filter_by(id=catid).first()
-            if category is None:
+            if category is None or category.delete is True:
                 return {'message': 'Category not found'}, 404
             
             if category.menuId != menuid:
@@ -433,13 +424,13 @@ class Dishes(Resource):
     @login_required(authority='customer')
     def get(self, menuid, catid, dishid):
         dish = Dish.query.filter_by(id=dishid).first()
-        if dish is None:
+        if dish is None or dish.delete is True:
             return {'message': 'Dish not found'}, 404
         if dish.catId != catid:
             return {'message': 'Bad category'}, 400
 
         category = Category.query.filter_by(id=catid).first()
-        if category is None:
+        if category is None or category.delete is True:
             return {'message': 'Category not found'}, 404
         
         if category.menuId != menuid:
@@ -452,13 +443,13 @@ class Dishes(Resource):
     def delete(self, menuid, catid, dishid):
 
         dish = Dish.query.filter_by(id=dishid).first()
-        if dish is None:
+        if dish is None or dish.delete is True:
             return {'message': 'Dish not found'}, 404
         if dish.catId != catid:
             return {'message': 'Bad category'}, 400
 
         category = Category.query.filter_by(id=catid).first()
-        if category is None:
+        if category is None or category.delete is True:
             return {'message': 'Category not found'}, 404
         
         if category.menuId != menuid:

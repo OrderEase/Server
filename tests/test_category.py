@@ -55,38 +55,27 @@
 #         response = self.client.put('http://localhost:5000/api/busers/session')
 #         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
-#     # 测试新建菜单
-#     def test_newMenu(self):
-#         response = self.client.post('http://localhost:5000/api/menus/', 
-#                         data=self.menu)
-#         self.assertTrue(200==response.status_code)
-#         data = response.get_data()
-#         data.decode('utf-8')
-#         data = json.loads(data)
-
-#     # 测试获取所有菜单
-#     def test_getAllMenu(self):
-        
-#         # 新建2个菜单
-#         self.createMenu()
-#         self.menu['name'] = '夏季菜单'
-#         self.createMenu()
-
-#         # 获取所有菜单
-#         response = self.client.get('http://localhost:5000/api/menus/')
-#         self.assertTrue(200==response.status_code)
-#         data = response.get_data()
-#         data.decode('utf-8')
-#         data = json.loads(data)
-#         # print(data)
-    
-#     # 测试根据id获取
-#     def test_getMenuById(self):
-        
-#         # 新建一个菜单并获取id
+#     # 测试新建类别
+#     def test_newCategory(self):
+#         # 新建菜单
 #         id = self.createMenu()
 
-#         # 用id获取菜单
+#         # 新建2个类别
+#         url = 'http://localhost:5000/api/menus/' + str(id) + '/categories/'
+#         response = self.client.post(url, data=self.category)
+#         self.assertTrue(200==response.status_code)
+
+#         self.category['name'] = '素菜'
+#         self.category['rank'] = 2
+#         url = 'http://localhost:5000/api/menus/' + str(id) + '/categories/'
+#         response = self.client.post(url, data=self.category)
+#         self.assertTrue(200==response.status_code)
+#         data = response.get_data()
+#         data.decode('utf-8')
+#         data = json.loads(data)
+#         catid = data.get('id')
+
+#         # 获取菜单
 #         url = 'http://localhost:5000/api/menus/' + str(id)
 #         response = self.client.get(url)
 #         self.assertTrue(200==response.status_code)
@@ -94,63 +83,94 @@
 #         data.decode('utf-8')
 #         data = json.loads(data)
 #         self.assertTrue(id==data.get('id'))
+#         content = data.get('content', None)
+#         self.assertTrue(content is not None)
+#         found = False
+#         for cat in content:
+#             if cat.get('id') == catid:
+#                 found = True
+#                 break
+#         self.assertTrue(found is True)
 #         # print(data)
     
 #     # 测试修改菜单
-#     def test_modifyMenu(self):
+#     def test_modifyCategory(self):
         
 #         # 新建一个菜单并获取id
-#         id = self.createMenu()
+#         menuid = self.createMenu()
 
-#         url = 'http://localhost:5000/api/menus/' + str(id)
-
-#         # 验证能获取菜单，且菜单名不等于'改个名'
-#         response = self.client.get(url)
+#         # 新建1个类别
+#         url = 'http://localhost:5000/api/menus/' + str(menuid) + '/categories/'
+#         response = self.client.post(url, data=self.category)
 #         self.assertTrue(200==response.status_code)
 #         data = response.get_data()
 #         data.decode('utf-8')
 #         data = json.loads(data)
-#         self.assertTrue(self.menu['name']==data.get('name'))
-#         self.assertFalse(self.menu['name']=='改个名')
+#         catid = data.get('id')
 
-#         # 根据id修改菜单
+#         # 根据id修改类别
+#         url = 'http://localhost:5000/api/menus/' \
+#                 + str(menuid) + '/categories/' + str(catid)
 #         response = self.client.put(url, data={'name': '改个名'})
 #         self.assertTrue(200==response.status_code)
 
-#         # 根据id获取菜单, 验证name已改为'改个名'
+#         # 根据id获取菜单, 验证category name已改为'改个名'
+#         url = 'http://localhost:5000/api/menus/' + str(menuid)
 #         response = self.client.get(url)
 #         self.assertTrue(200==response.status_code)
 #         data = response.get_data()
 #         data.decode('utf-8')
 #         data = json.loads(data)
-#         self.assertTrue('改个名'==data.get('name'))
+#         content = data.get('content', None)
+#         for cat in content:
+#             if cat.get('id') == catid:
+#                 new_name = cat.get('name')
+#         self.assertTrue(new_name == '改个名')
 #         # print(data)
     
-#     # 测试删除菜单
+#     # 测试删除类别
 #     def test_deleteMenu(self):
         
-#         # 新建一个菜单并获取id
-#         id = self.createMenu()
+#         # 新建菜单
+#         menuid = self.createMenu()
 
-#         url = 'http://localhost:5000/api/menus/' + str(id)
+#         # 新建1个类别
+#         url = 'http://localhost:5000/api/menus/' + str(menuid) + '/categories/'
+#         response = self.client.post(url, data=self.category)
+#         self.assertTrue(200==response.status_code)
+#         data = response.get_data()
+#         data.decode('utf-8')
+#         data = json.loads(data)
+#         catid = data.get('id')
 
-#         # 验证能获取菜单
+#         # 测试此时有1个category
+#         url = 'http://localhost:5000/api/menus/' + str(menuid)
 #         response = self.client.get(url)
 #         self.assertTrue(200==response.status_code)
+#         data = response.get_data()
+#         data.decode('utf-8')
+#         data = json.loads(data)
+#         content = data.get('content', None)
+#         self.assertTrue(len(content) == 1)
 
-#         # 删除菜单
+#         # 删除类别
+#         url = 'http://localhost:5000/api/menus/' \
+#                 + str(menuid) + '/categories/' + str(catid)
 #         response = self.client.delete(url)
 #         self.assertTrue(200==response.status_code)
 
-#         # 验证不能获取菜单
+#         # 测试没有了该类别
+#         url = 'http://localhost:5000/api/menus/' + str(menuid)
 #         response = self.client.get(url)
-#         self.assertTrue(404==response.status_code)
-        
-#         response = self.client.get('http://localhost:5000/api/menus/')
 #         self.assertTrue(200==response.status_code)
 #         data = response.get_data()
 #         data.decode('utf-8')
 #         data = json.loads(data)
-#         self.assertTrue(data.get('menus')==[])
-#         # print(data)
+#         content = data.get('content', None)
+#         self.assertTrue(len(content) == 0)
 
+#         url = 'http://localhost:5000/api/menus/' \
+#                 + str(menuid) + '/categories/' + str(catid)
+#         response = self.client.delete(url)
+#         self.assertTrue(404==response.status_code)
+        

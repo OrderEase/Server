@@ -30,7 +30,7 @@ def login_required(authority="ANY"):
                     return {'message': 'Your authority is not valid.'}, 401
                 if authority == 'cook' and current_user.authority == 'customer':
                     return {'message': 'Your authority is not valid.'}, 401
-                if authority == 'manager' and current_user.authority == 'manager':
+                if authority == 'manager' and current_user.authority != 'manager':
                     return {'message': 'Your authority is not valid.'}, 401
 
             return func(*args, **kwargs)
