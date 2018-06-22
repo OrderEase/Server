@@ -3,6 +3,7 @@ from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
+
 db = SQLAlchemy()
 
 class User(db.Model, UserMixin):
@@ -327,9 +328,9 @@ class Restaurant(db.Model):
                 'close: {close}').format(**tmp)
 
     def json(self):
-        t_menus = []
-        for menu in self.menus:
-            t_menus.append(menu.json())
+        # t_menus = []
+        # for menu in self.menus:
+        #     t_menus.append(menu.json())
 
         t_cars = []
         for car in self.cars:
@@ -340,8 +341,8 @@ class Restaurant(db.Model):
             'name': self.name,
             'open': self.open.strftime("%Y-%m-%d %H:%M:%S"),
             'close': self.close.strftime("%Y-%m-%d %H:%M:%S"),
-            'carousels': t_cars,
-            'menus': t_menus
+            'carousels': t_cars
+            # 'menus': t_menus
         }
 
 class Carousel(db.Model):

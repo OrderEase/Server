@@ -82,9 +82,6 @@ class FlaskClientTest(unittest.TestCase):
         })
         self.assertTrue("Change password successfully." in response.get_data(as_text=True))
 
-        response = self.client.put('http://localhost:5000/api/busers/session')
-        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
-
         response = self.client.post('http://localhost:5000/api/busers/session', data={
             "username": "aaa",
             "password": "123"

@@ -1,10 +1,12 @@
-from flask import request
+# *-* coding: utf-8 *-*
+from flask import request, json, Response
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from app.models import Menu, Category, Dish, Restaurant, db
 from app.login import login_required
+import json
 
-api = Namespace('menu')
+api = Namespace('menus')
 
 # Menu
 @api.route('/')
@@ -19,16 +21,11 @@ class Menus(Resource):
 
             name = form.get('name')
             if name is None:
-                return {'message': 'Dish name is required'}, 400
+                ret = {'message': 'Dish name is required'}
+                return Response(json.dumps(ret), 
+                        status=400, 
+                        mimetype='application/json')
 
-            rank = form.get('rank')
-            if rank is None:
-                return {'message': 'Dish rank is required'}, 400
-            try:
-                rank = int(rank)
-            except Exception as e:
-                print(e)
-                return {'message': 'Dish rank must be integer'}, 400
 
             used = form.get('used')
             if used is None:
@@ -37,29 +34,43 @@ class Menus(Resource):
                 used = int(used)
             except Exception as e:
                 print(e)
-                return {'message': ('Used must be 0 or 1, 1 means in use')}, 400
-            if used != 0 or used != 1:
-                return {'message': ('Used must be 0 or 1, 1 means in use')}, 400
+                ret = {'message': ('Used must be 0 or 1,'
+                            ' 1 means in use')}
+                return Response(json.dumps(ret), 
+                        status=400, 
+                        mimetype='application/json')
+
+            if used != 0 and used != 1:
+                ret = {'message': ('Used must be 0 or 1,'
+                            ' 1 means in use')}
+                return Response(json.dumps(ret), 
+                        status=400, 
+                        mimetype='application/json')
 
             menu = Menu()
             menu.name = name
-            menu.rank = rank
             menu.used = used
             menu.restId = 1
             menu.delete = False
             db.session.add(menu)
             db.session.commit()
 
-            return {
+            ret = {
                 'message': 'Add a new menu successfully',
                 'id': menu.id
-                }, 200
+                }
+            return Response(json.dumps(ret), 
+                        status=200, 
+                        mimetype='application/json')
         except Exception as e:
             print(e)
-            return {'message': 'Internal Server Error'}, 500
+            ret = {'message': 'Internal Server Error'}
+            return Response(json.dumps(ret), 
+                        status=500,
+                        mimetype='application/json')
     
     # 获取所有菜单
-    @login_required(authority='customer')
+    @login_required(authority='manager')
     def get(self):
 
         try:
@@ -119,7 +130,7 @@ class Menus(Resource):
                 except Exception as e:
                     print(e)
                     return {'message': 'Used must be 0 or 1, 1 means in use'}, 400
-                if used != 0 or used != 1:
+                if used != 0 and used != 1:
                     return {'message': 'Used must be 0 or 1, 1 means in use'}, 400
                 menu.used = used
 
@@ -270,7 +281,7 @@ class Dishes(Resource):
             
             img = form.get('img')
             if img is None:
-                return {'message': 'Img is required'}, 400
+                img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
             
             price = form.get('price')
             if price is None:
@@ -300,7 +311,7 @@ class Dishes(Resource):
                 return {
                     'message': 'Avaliable must be 0 or 1, 1 means avaliable'
                     }, 400
-            if avaliable != 0 or avaliable != 1:
+            if avaliable != 0 and avaliable != 1:
                 return {
                     'message': 'Avaliable must be 0 or 1, 1 means avaliable'
                     }, 400
@@ -399,7 +410,7 @@ class Dishes(Resource):
                     return {
                         'message': 'Avaliable must be 0 or 1, 1 means avaliable'
                         }, 400
-                if avaliable != 0 or avaliable != 1:
+                if avaliable != 0 and avaliable != 1:
                     return {
                         'message': 'Avaliable must be 0 or 1, 1 means avaliable'
                         }, 400
