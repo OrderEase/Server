@@ -5,3 +5,4 @@ flask-mysqldb
 flask-login
 flask-script
 coveralls
+pillow
