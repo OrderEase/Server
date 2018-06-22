@@ -26,11 +26,11 @@ def login_required(authority="ANY"):
             if not current_user.is_authenticated:
                 return current_app.login_manager.unauthorized()
             if authority != "ANY":
-                if current_user.authority == 'customer' and authority != 'customer':
+                if authority == 'customer' and current_user.authority == 'cook':
                     return {'message': 'Your authority is not valid.'}, 401
-                if current_user.authority == 'cook' and authority != 'cook':
+                if authority == 'cook' and current_user.authority == 'customer':
                     return {'message': 'Your authority is not valid.'}, 401
-                if current_user.authority == 'manager' and authority == 'customer':
+                if authority == 'manager' and current_user.authority == 'manager':
                     return {'message': 'Your authority is not valid.'}, 401
 
             return func(*args, **kwargs)
