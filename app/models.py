@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), doc='用户名', unique=True)
     password = db.Column(db.String(32), doc='密码', nullable=True)
+    avatar = db.Column(db.String(100), doc='头像路径', nullable=True, default='default.png')
     authority = db.Column(db.String(32), doc='权限, [customer, manager, cook]', nullable=False)
 
     def __repr__(self):
