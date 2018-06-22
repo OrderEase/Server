@@ -1,6 +1,6 @@
 # OrderEase Server
 [![Build Status](https://travis-ci.org/OrderEase/Server.svg?branch=master)](https://travis-ci.org/OrderEase/Server)
-[![Coverage Status](https://coveralls.io/repos/github/YHJRUBY/OrderEase-Server/badge.svg?branch=master)](https://coveralls.io/github/YHJRUBY/OrderEase-Server?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/OrderEase/Server/badge.svg?branch=master)](https://coveralls.io/github/OrderEase/Server?branch=master)
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)
 
 
