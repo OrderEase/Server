@@ -1,8 +1,7 @@
-from datetime import datetime, date
+from datetime import datetime, date, time
 # from app import db
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-
 
 db = SQLAlchemy()
 
@@ -76,6 +75,9 @@ class Order(db.Model):
         for item in self.items:
             t_orderItems.append(item.json())
 
+        payDate = ''
+        if self.payDate is not None:
+            payDate = self.payDate.strftime("%Y-%m-%d %H:%M:%S")
         return {
             'id': self.id,
             'tableId': self.tableId,
@@ -83,10 +85,11 @@ class Order(db.Model):
             'due': self.due,
             'isPay': self.isPay,
             'payWay': str(self.payWay),
-            'payDate': self.payDate.strftime("%Y-%m-%d %H:%M:%S"),
+            'payDate': payDate,
             'payId': self.payId,
             'dishes': t_dishes,
-            'orderItems': t_orderItems
+            'orderItems': t_orderItems,
+            'finished': self.finished
         }
 
 class OrderItem(db.Model):
@@ -112,13 +115,17 @@ class OrderItem(db.Model):
         return 'item {id}, order: {orderId}, dishId: {dishId}'.format(**tmp)
 
     def json(self):
+        time = ''
+        if self.time is not None:
+            time = self.time.strftime("%Y-%m-%d %H:%M:%S")
+
         return {
             'id': self.id,
             'orderId': self.orderId,
             'dishId': self.dishId,
             'quantity': self.quantity,
             'finished': self.finished,
-            'time': self.time.strftime("%Y-%m-%d %H:%M:%S"),
+            'time': time,
             'urge': self.urge,
             'like': self.like
         }
@@ -322,8 +329,8 @@ class Restaurant(db.Model):
         tmp = {
             'id': self.id,
             'name': self.name,
-            'open': self.open.strftime("%Y-%m-%d %H:%M:%S"),
-            'close': self.close.strftime("%Y-%m-%d %H:%M:%S")
+            # 'open': time2stamp(self.open),
+            # 'close': time2stamp(self.close)
         }
         return ('id: {id}, name: {name}, open: {open}\n'
                 'close: {close}').format(**tmp)
@@ -340,9 +347,9 @@ class Restaurant(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'open': self.open.strftime("%Y-%m-%d %H:%M:%S"),
-            'close': self.close.strftime("%Y-%m-%d %H:%M:%S"),
-            'carousels': t_cars
+            'open': self.open.strftime("%H:%M:%S"),
+            'close': self.close.strftime("%H:%M:%S"),
+            # 'carousels': t_cars,
             # 'menus': t_menus
         }
 

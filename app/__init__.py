@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from app.models import db
-
+from datetime import datetime
 
 def create_app(test_config=None):
 
@@ -30,6 +30,8 @@ def create_app(test_config=None):
     if restaurant is None:
         restaurant = Restaurant()
         restaurant.id = 1
+        restaurant.open = datetime.strptime('00:00:00', "%H:%M:%S")
+        restaurant.close = datetime.strptime('00:00:00', "%H:%M:%S")        
         restaurant.name = 'default'
         db.session.add(restaurant)
         db.session.commit()

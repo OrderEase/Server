@@ -5,6 +5,10 @@ from flask_restplus import Namespace, Resource
 from app.models import Menu, Category, Dish, Restaurant, db
 from app.login import login_required
 import json
+from flask_login import current_user
+from PIL import Image
+import hashlib
+from .utils import getImageFromBase64
 
 api = Namespace('menus')
 
@@ -17,11 +21,11 @@ class Menus(Resource):
     def post(self):
 
         try:
-            form = request.form
-
+            form = request.get_json(force=True)
+            # print(form)
             name = form.get('name')
             if name is None:
-                ret = {'message': 'Dish name is required'}
+                ret = {'message': 'Menu name is required'}
                 return Response(json.dumps(ret), 
                         status=400, 
                         mimetype='application/json')
@@ -109,7 +113,7 @@ class Menus(Resource):
             return {'message': 'Menu not found'}, 404
 
         try:
-            form = request.form
+            form = request.get_json(force=True)
             name = form.get('name')
             if name is not None:
                 menu.name = name
@@ -153,7 +157,7 @@ class Categories(Resource):
     def post(self, menuid):
 
         try:
-            form = request.form
+            form = request.get_json(force=True)
 
             name = form.get('name')
             if name is None:
@@ -215,7 +219,7 @@ class Categories(Resource):
             if category.menuId != menuid:
                 return {'message': 'Category not in menu'}, 400
                 
-            form = request.form
+            form = request.get_json(force=True)
 
             name = form.get('name')
             if name is not None:
@@ -248,6 +252,8 @@ class Dishes(Resource):
     def post(self, menuid, catid):
 
         try:
+            dish = Dish()
+
             category = Category.query.filter_by(id=catid).first()
             if category is None or category.delete is True:
                 return {'message': 'Bad category'}, 400
@@ -255,7 +261,7 @@ class Dishes(Resource):
             if category.menuId != menuid:
                 return {'message': 'Bad menu'}, 400
 
-            form = request.form
+            form = request.get_json(force=True)
 
             name = form.get('name')
             if name is None:
@@ -270,10 +276,22 @@ class Dishes(Resource):
                 print(e)
                 return {'message': 'Dish rank must be integer'}, 400
             
-            img = form.get('img')
-            if img is None:
-                img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
+            # img = form.get('img')
+            # if img is None:
+            #     img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
             
+            dataURI = form.get('img')
+            path = 'static/images/dishes/default.png'
+            if dataURI is not None:
+                hl = hashlib.md5()
+                hl.update(('%s.png' % dish.id).encode(encoding='utf-8'))
+
+                avatar = '%s.png' % hl.hexdigest()
+
+                path = 'static/images/dishes/' + avatar
+                image = getImageFromBase64(dataURI)
+                image.save(path)
+
             price = form.get('price')
             if price is None:
                 return {'message': 'Price is required'}, 400
@@ -311,10 +329,11 @@ class Dishes(Resource):
             if description is None:
                 description = ""
 
-            dish = Dish()
+            
+            dish.img = path
             dish.name = name
             dish.rank = rank
-            dish.img = img
+            # dish.img = img
             dish.price = price
             dish.stock = stock
             dish.avaliable = avaliable
@@ -332,6 +351,19 @@ class Dishes(Resource):
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
+
+# @api.route('/<int:menuid>/categories/<int:catid>/dishes/<int:dishid>/avatar')
+# class Dishesr(Resource):
+
+#     @login_required(authority="customer")
+#     def get(self):
+#         try:
+#             buser = User.query.filter_by(id=current_user.id).first()
+#             return {"path": 'static/images/users/' + buser.avatar}, 200
+
+#         except Exception as e:
+#             print(e)
+#             return {'message': 'Internal Server Error'}, 500
 
 @api.route('/<int:menuid>/categories/<int:catid>/dishes/<int:dishid>')
 class Dishes(Resource):
@@ -354,7 +386,7 @@ class Dishes(Resource):
             if category.menuId != menuid:
                 return {'message': 'Category not in menu'}, 400
 
-            form = request.form
+            form = request.get_json(force=True)
 
             name = form.get('name')
             if name is not None:
@@ -370,9 +402,19 @@ class Dishes(Resource):
                 dish.rank = rank
             
             
-            img = form.get('img')
-            if img is not None:
-                dish.img = img
+            # img = form.get('img')
+            # if img is not None:
+            #     dish.img = img
+            dataURI = form.get('img')
+            if dataURI is not None:
+                hl = hashlib.md5()
+                hl.update(('%s.png' % dish.id).encode(encoding='utf-8'))
+
+                avatar = '%s.png' % hl.hexdigest()
+                path = 'static/images/dishes/' + avatar
+                dish.img = path
+                image = getImageFromBase64(dataURI)
+                image.save(path)
             
             price = form.get('price')
             if price is not None:

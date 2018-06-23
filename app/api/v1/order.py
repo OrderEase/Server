@@ -1,14 +1,15 @@
-from flask import request
+from flask import request, json
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
 from app.models import Order, Dish, OrderItem, db
 from time import strptime
 from app.login import login_required
+from flask_login import current_user
 
 
 api = Namespace('orders')
 
-@api.route('/cuser')
+@api.route('/cuser/')
 class Orders(Resource):
 
     # 新建订单
@@ -16,7 +17,9 @@ class Orders(Resource):
     def post(self):
 
         try:
-            form = request.form
+            form = request.get_json(force=True)
+            # form = request.form
+            # print(form)
             tableId = form.get('tableId')
             if tableId is None:
                 return {'message': 'Table\'s id is required'}, 400
@@ -25,7 +28,7 @@ class Orders(Resource):
 
             total = 0
             # dishesId = list(map(int, form.get('dishes').strip().split(',')))
-            contents = form.getlist('content[]')
+            contents = form.get('content')
             dishes = []
             items = []
             for item in contents:
@@ -56,6 +59,7 @@ class Orders(Resource):
                 item.like = 0
                 items.append(item)
 
+            due = total
             t_total = form.get('total')
             if t_total is None:
                 return {'message': 'Total is required'}, 400
@@ -67,8 +71,6 @@ class Orders(Resource):
                 return {'message': 'Due is required'}, 400
             if t_due != due:
                 return {'message': 'Due is wrong, check it!'}, 400
-
-            due = total
 
             order = Order()
             order.tableId = tableId
@@ -107,7 +109,7 @@ class Orders(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-@api.route('/cuser/oid/<oid>')
+@api.route('/cuser/oid/<int:oid>')
 class Orders(Resource):
 
     # 用户付款
@@ -115,7 +117,7 @@ class Orders(Resource):
     def post(self, oid):
 
         try:
-            form = request.form
+            form = request.get_json(force=True)
             payId = form.get('payId')
             if payId is None:
                 return {'message': 'Wrong pay id'}, 400
@@ -131,7 +133,7 @@ class Orders(Resource):
 
             order.payDate = datetime.now()
             order.payId = payId
-            order.isPay = True
+            order.isPay = 1
             order.payWay = 'WeChat Pay'
             db.session.commit()
 
@@ -159,7 +161,7 @@ class Orders(Resource):
 
     # 用户修改订单
     @login_required(authority='customer')
-    def get(self, oid):
+    def put(self, oid):
 
         try:
             order = Order.query.filter_by(id=oid).first()
@@ -167,8 +169,10 @@ class Orders(Resource):
                 return {'message': 'Order not found'}, 404
             if order.uid != current_user.id:
                 return {'message': 'Wrong order id'}, 400
+            if order.isPay == 0:
+                return {'message': 'Order not paid'}, 400
 
-            form = request.form
+            form = request.get_json(force=True)
             dishId = form.get('dishId')
             if dishId is None:
                 return {'message': 'Dish id is required'}, 400
@@ -192,7 +196,7 @@ class Orders(Resource):
                             return {
                                 'message': 'Like should be 0 or 1, 1 means like'
                                 }, 400
-                        if like != 0 or like != 1:
+                        if like != 0 and like != 1:
                             return {
                                 'message': 'Like should be 0 or 1, 1 means like'
                                 }, 400
@@ -207,7 +211,7 @@ class Orders(Resource):
                             return {
                                 'message': 'Urge should be 0 or 1, 1 means urge'
                                 }, 400
-                        if urge != 0 or urge != 1:
+                        if urge != 0 and urge != 1:
                             return {
                                 'message': 'Urge should be 0 or 1, 1 means urge'
                                 }, 400
@@ -226,7 +230,7 @@ class Orders(Resource):
             return {'message': 'Internal Server Error'}, 500
 
 
-@api.route('/buser/oid/<oid>')
+@api.route('/buser/oid/<int:oid>')
 class Orders(Resource):
 
     # 商家修改订单
@@ -238,8 +242,10 @@ class Orders(Resource):
         try:
             if order is None:
                 return {'message': 'Order not found'}, 404
+            if order.isPay == 0:
+                return {'message': 'Order not paid'}, 400
 
-            form = request.form
+            form = request.get_json(force=True)
             dishId = form.get('dishId')
             if dishId is None:
                 return {'message': 'Dish id is required'}, 400
@@ -263,7 +269,7 @@ class Orders(Resource):
                             return {
                                 'message': 'Finished should be 0 or 1, 1 means finished'
                                 }, 400
-                        if finished != 0 or finished != 1:
+                        if finished != 0 and finished != 1:
                             return {
                                 'message': 'Finished should be 0 or 1, 1 means finished'
                                 }, 400
@@ -275,10 +281,6 @@ class Orders(Resource):
                             time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
                         except Exception as e:
                             print(e)
-                            return {
-                                'message': 'Wrong date-time format'
-                                }, 400
-                        if finished != 0 or finished != 1:
                             return {
                                 'message': 'Wrong date-time format'
                                 }, 400

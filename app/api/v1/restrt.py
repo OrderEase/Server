@@ -1,5 +1,5 @@
 from flask import request
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from flask_restplus import Namespace, Resource
 from app.models import Restaurant, db, Menu, Dish
 from app.login import login_required
@@ -24,13 +24,13 @@ class Rstrs(Resource):
 
     # 修改餐馆信息
     @login_required(authority='manager')
-    def put(self, buid):
+    def put(self):
         try:
             rstr = Restaurant.query.filter_by(id=1).first()
             if rstr is None:
                 return {'message': 'Restaurant not found'}, 404
 
-            form = request.form
+            form = request.get_json(force=True)
             name = form.get('name')
             if name is not None:
                 rstr.name = name
@@ -39,26 +39,36 @@ class Rstrs(Resource):
             if description is not None:
                 rstr.description = description
 
-            img = form.get('img')
-            if img is not None:
-                rstr.img = img
+            # img = form.get('img')
+            # if img is not None:
+            #     rstr.img = img
+            dataURI = form.get('img')
+            if dataURI is not None:
+                hl = hashlib.md5()
+                hl.update(('%s.png' % rstr.id).encode(encoding='utf-8'))
+
+                avatar = '%s.png' % hl.hexdigest()
+                rstr.img = avatar
+                path = 'static/images/restrt/' + avatar
+                image = getImageFromBase64(dataURI)
+                image.save(path)
             
             open = form.get('open')
             if open is not None:
                 try:
-                    open = datetime.strptime(open, "%Y-%m-%d %H:%M:%S")
+                    open = datetime.strptime(open, "%H:%M:%S")
                 except Exception as e:
                     print(e)
-                    return {'message': 'Wrong format of datetime'}, 400
+                    return {'message': 'Wrong format of time'}, 400
                 rstr.open = open
             
             close = form.get('close')
             if close is not None:
                 try:
-                    close = datetime.strptime(close, "%Y-%m-%d %H:%M:%S")
+                    close = datetime.strptime(close, "%H:%M:%S")
                 except Exception as e:
                     print(e)
-                    return {'message': 'Wrong format of datetime'}, 400
+                    return {'message': 'Wrong format of time'}, 400
                 rstr.close = close
 
             db.session.commit()

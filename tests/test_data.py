@@ -15,7 +15,6 @@ dishes = [{
     "stock": 99,
     "avaliable": 1,
     "description": "很难吃",
-    "img": "https://raw.githubusercontent.com/OrderEase/Server/master/assets/tomato.jpg"
 }, {
     "name": "马铃薯炒土豆",
     'rank': 3,
@@ -23,7 +22,6 @@ dishes = [{
     "stock": 99,
     "avaliable": 1,
     "description": "很好吃",
-    "img": "https://raw.githubusercontent.com/OrderEase/Server/master/assets/potato.jpg"
 }, {
     "name": "毛血旺",
     'rank': 1,
@@ -31,7 +29,6 @@ dishes = [{
     "stock": 99,
     "avaliable": 1,
     "description": "Hello 毛血旺",
-    "img": "https://raw.githubusercontent.com/OrderEase/Server/master/assets/maoxuewan.jpg"
 }, {
     "name": "红烧许琦",
     'rank': 4,
