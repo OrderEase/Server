@@ -93,6 +93,36 @@ class Menus(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
+@api.route('/cuser')
+class Menus(Resource):
+    @login_required(authority='customer')
+    def get(self):
+        menu = Menu.query.filter_by(used=1).first()
+        if menu is None or menu.delete is True:
+            return {'message': 'Menu not found'}, 404
+        
+        content = []
+        for cat in menu.cats:
+            t_dishes = []
+            for dish in cat.dishes:
+                if dish.avaliable == 1:
+                    t_dishes.append(dish.json())
+
+            cat_json = {
+                'id': cat.id,
+                'name': cat.name,
+                'rank': cat.rank,
+                'dishes': t_dishes
+            }
+            content.append(cat_json)
+
+        return {
+            'id': menu.id,
+            'name': menu.name,
+            'used': menu.used,
+            'content': content
+        }, 200
+
 @api.route('/<int:menuid>')
 class Menus(Resource):
 

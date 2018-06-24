@@ -264,3 +264,41 @@ class FlaskClientTest(unittest.TestCase):
                     found = True
         self.assertFalse(found)
         
+    # 测试获取用户菜单
+    def test_getAvaliableDishes(self):
+        # 新建一个完整菜单并获取id
+        menuid = self.createFullMenu()
+
+        # 根据id获取菜单, 获取第一个类别id，和第二个类别第一个菜id
+        url = 'http://localhost:5000/api/menus/' + str(menuid)
+        response = self.client.get(url)
+        self.assertTrue(200==response.status_code)
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        content = data.get('content', None)
+        self.assertTrue(content is not None)
+        catid1 = content[0].get('id')
+        catid2 = content[1].get('id')
+        dishes = content[1].get('dishes')
+        dishid = dishes[0].get('id')
+
+        # 删除第一个类别和第二个类别的第一个菜
+        url = 'http://localhost:5000/api/menus/' \
+             + str(menuid) + '/categories/' + str(catid1)
+        response = self.client.delete(url)
+        self.assertTrue(200==response.status_code)
+
+        url = 'http://localhost:5000/api/menus/' \
+                + str(menuid) + '/categories/' + str(catid2) \
+                + '/dishes/' + str(dishid)
+        response= self.client.put(url, data=json.dumps({'avaliable': 0}))
+        
+        # 获取菜单
+        url = 'http://localhost:5000/api/menus/cuser'
+        response = self.client.get(url)
+        self.assertTrue(200==response.status_code)
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        print(data)
