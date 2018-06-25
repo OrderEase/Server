@@ -46,7 +46,7 @@ class Rstrs(Resource):
             open = form.get('open')
             if open is not None:
                 try:
-                    open = datetime.strptime(open, "%H:%M:%S")
+                    open = datetime.strptime(open, "%H:%M")
                 except Exception as e:
                     print(e)
                     return {'message': 'Wrong format of time'}, 400
@@ -55,7 +55,7 @@ class Rstrs(Resource):
             close = form.get('close')
             if close is not None:
                 try:
-                    close = datetime.strptime(close, "%H:%M:%S")
+                    close = datetime.strptime(close, "%H:%M")
                 except Exception as e:
                     print(e)
                     return {'message': 'Wrong format of time'}, 400
