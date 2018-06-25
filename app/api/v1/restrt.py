@@ -39,19 +39,9 @@ class Rstrs(Resource):
             if description is not None:
                 rstr.description = description
 
-            # img = form.get('img')
-            # if img is not None:
-            #     rstr.img = img
-            dataURI = form.get('img')
-            if dataURI is not None:
-                hl = hashlib.md5()
-                hl.update(('%s.png' % rstr.id).encode(encoding='utf-8'))
-
-                avatar = '%s.png' % hl.hexdigest()
-                rstr.img = avatar
-                path = 'static/images/restrt/' + avatar
-                image = getImageFromBase64(dataURI)
-                image.save(path)
+            img = form.get('img')
+            if img is not None:
+                rstr.img = img
             
             open = form.get('open')
             if open is not None:

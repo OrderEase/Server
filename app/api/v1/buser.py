@@ -45,48 +45,6 @@ class BUserRegister(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-@api.route('/avatar')
-class BUserRegister(Resource):
-
-    @login_required(authority="manager")
-    def get(self):
-        """获取商家图片"""
-        try:
-            buser = User.query.filter_by(id=current_user.id).first()
-            return {"path": 'static/images/users/' + buser.avatar}, 200
-
-        except Exception as e:
-            print(e)
-            return {'message': 'Internal Server Error'}, 500
-
-    @login_required(authority="manager")
-    def put(self):
-        """更改商家图像
-        """
-        try:
-            form = request.form
-
-            dataURI = form.get('data')
-            if dataURI is None:
-                return {'message': 'Image is required.'}, 400
-
-            hl = hashlib.md5()
-            hl.update(('%s.png' % current_user.id).encode(encoding='utf-8'))
-
-            buser = User.query.filter_by(id=current_user.id).first()
-            buser.avatar = '%s.png' % hl.hexdigest()
-
-            path = 'static/images/users/' + buser.avatar
-            image = getImageFromBase64(dataURI)
-            image.save(path)
-
-            db.session.commit()
-            return {"message": "Successfully modify avatar."}, 200
-
-        except Exception as e:
-            print(e)
-            return {'message': 'Internal Server Error'}, 500
-
 @api.route('/password')
 class BUserModifyPassword(Resource):
 

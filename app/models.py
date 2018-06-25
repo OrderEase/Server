@@ -347,6 +347,7 @@ class Restaurant(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'img': self.img,
             'open': self.open.strftime("%H:%M:%S"),
             'close': self.close.strftime("%H:%M:%S"),
             # 'carousels': t_cars,
