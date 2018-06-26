@@ -13,7 +13,7 @@ class CuserLog(Resource):
 	def post(self):
 		''' log in '''
 		try:
-			form = request.form
+			form = request.get_json(force=True)
 
 			username = form.get('username')
 			if username is None:

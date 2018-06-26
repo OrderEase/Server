@@ -17,7 +17,7 @@ class BUserRegister(Resource):
         """新建商家用户
         """
         try:
-            form = request.form
+            form = request.get_json(force=True)
 
             username = form.get('username')
             if username is None:
@@ -49,16 +49,23 @@ class BUserRegister(Resource):
 class BUserModifyPassword(Resource):
 
     @login_required(authority="manager")
-    def post(self):
+    def put(self):
         try:
-            form = request.form
+            form = request.get_json(force=True)
 
-            password = form.get('password')
-            if password is None:
-                return {'message': 'Password is required.'}, 400
+            old_password = form.get('oldPassword')
+            if old_password is None:
+                return {'message': 'Old password is required.'}, 400
+
+            new_password = form.get('newPassword')
+            if new_password is None:
+                return {'message': 'New password is required.'}, 400
 
             buser = User.query.get(current_user.id)
-            buser.password = password
+            if old_password != buser.password:
+                return {'message': 'Old password wrong.'}, 401
+
+            buser.password = new_password
             db.session.commit()
 
             return {"message": "Change password successfully."}, 200
@@ -73,7 +80,7 @@ class BUserLog(Resource):
     def post(self):
         """log in """
         try:
-            form = request.form
+            form = request.get_json(force=True)
 
             username = form.get('username')
             if username is None:
@@ -92,7 +99,6 @@ class BUserLog(Resource):
             return {"message": "Successfully login."}, 200
 
         except Exception as e:
-            print(e)
             return {'message': 'Internal Server Error'}, 500
 
     @login_required(authority="manager")

@@ -14,7 +14,7 @@ class CreateRules(Resource):
     def post(self, pid):
 
         try:
-            form = request.form
+            form = request.get_json(force=True)
 
             mode = int(form.get('mode'))
             if mode is None :
@@ -91,7 +91,7 @@ class ModifyRules(Resource):
             if rule is None:
                 return {'message': 'rule not found.'}, 404
 
-            form = request.form
+            form = request.get_json(force=True)
 
             mode = int(form.get('mode'))
             if mode is None :

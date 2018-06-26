@@ -26,7 +26,7 @@ class Promotions(Resource):
     @login_required(authority="manager")
     def post(self):
         try:
-            form = request.form
+            form = request.get_json(force=True)
 
             theme = form.get('theme')
             if theme is None :
@@ -79,7 +79,7 @@ class Promotions(Resource):
     @login_required(authority="manager")
     def put(self, pid):
         try:
-            form = request.form
+            form = request.get_json(force=True)
 
             theme = form.get('theme')
             if theme is None:

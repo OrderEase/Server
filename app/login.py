@@ -1,14 +1,10 @@
 from functools import wraps
 from flask import current_app, _request_ctx_stack, has_request_context
 import flask_login
-from flask_login import LoginManager
-from werkzeug.local import LocalProxy
+from flask_login import LoginManager, current_user
 from app.models import User
 
-
 login_manager = LoginManager()
-
-current_user = LocalProxy(lambda: _get_user())
 
 def login_required(authority="ANY"):
     """Custom login required decorator.
@@ -37,18 +33,12 @@ def login_required(authority="ANY"):
         return decorated_view
     return wrapper
 
-def _get_user():
-    if has_request_context() and not hasattr(_request_ctx_stack.top, 'user'):
-        current_app.login_manager._load_user()
-
-    return getattr(_request_ctx_stack.top, 'user', None)
-
 def init_app(app):
    login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(id):
-    return User.query.get(id)
+    return User.query.get(int(id))
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
