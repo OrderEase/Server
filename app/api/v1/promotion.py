@@ -17,7 +17,7 @@ class Promotions(Resource):
             for promotion in promotions:
                 promotions_list.append(promotion.json())
 
-            return promotions_list, 200
+            return { 'promotions': promotions_list }, 200
 
         except Exception as e:
             print(e)
