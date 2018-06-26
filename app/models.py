@@ -319,6 +319,7 @@ class Restaurant(db.Model):
     img = db.Column(db.String(256), nullable=True)
     open = db.Column(db.DateTime, nullable=True)
     close = db.Column(db.DateTime, nullable=True)
+    description = db.Column(db.String(256), nullable=True)
 
     menus = db.relationship('Menu', backref='restaurant',
                 lazy='dynamic')
@@ -350,6 +351,7 @@ class Restaurant(db.Model):
             'img': self.img,
             'open': self.open.strftime("%H:%M"),
             'close': self.close.strftime("%H:%M"),
+            'description': self.description
             # 'carousels': t_cars,
             # 'menus': t_menus
         }

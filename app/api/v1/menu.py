@@ -221,6 +221,15 @@ class Categories(Resource):
 @api.route('/<int:menuid>/categories/<int:catid>')
 class Categories(Resource):
 
+    # 获取单个菜单
+    @login_required(authority='manager')
+    def get(self, menuid, catid):
+        category = Category.query.filter_by(id=catid).first()
+        if category is None or category.delete is True:
+            return {'message': 'Menu not found'}, 404
+
+        return category.json(), 200
+
     #删除类别
     @login_required(authority='manager')
     def delete(self, menuid, catid):
@@ -306,21 +315,9 @@ class Dishes(Resource):
                 print(e)
                 return {'message': 'Dish rank must be integer'}, 400
             
-            # img = form.get('img')
-            # if img is None:
-            #     img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
-            
-            dataURI = form.get('img')
-            path = 'static/images/dishes/default.png'
-            if dataURI is not None:
-                hl = hashlib.md5()
-                hl.update(('%s.png' % dish.id).encode(encoding='utf-8'))
-
-                avatar = '%s.png' % hl.hexdigest()
-
-                path = 'static/images/dishes/' + avatar
-                image = getImageFromBase64(dataURI)
-                image.save(path)
+            img = form.get('img')
+            if img is None:
+                img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
 
             price = form.get('price')
             if price is None:
@@ -360,10 +357,9 @@ class Dishes(Resource):
                 description = ""
 
             
-            dish.img = path
             dish.name = name
             dish.rank = rank
-            # dish.img = img
+            dish.img = img
             dish.price = price
             dish.stock = stock
             dish.avaliable = avaliable
@@ -432,19 +428,9 @@ class Dishes(Resource):
                 dish.rank = rank
             
             
-            # img = form.get('img')
-            # if img is not None:
-            #     dish.img = img
-            dataURI = form.get('img')
-            if dataURI is not None:
-                hl = hashlib.md5()
-                hl.update(('%s.png' % dish.id).encode(encoding='utf-8'))
-
-                avatar = '%s.png' % hl.hexdigest()
-                path = 'static/images/dishes/' + avatar
-                dish.img = path
-                image = getImageFromBase64(dataURI)
-                image.save(path)
+            img = form.get('img')
+            if img is not None:
+                dish.img = img
             
             price = form.get('price')
             if price is not None:
