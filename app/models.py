@@ -162,10 +162,13 @@ class Dish(db.Model):
                 'description: {description}').format(**tmp)
 
     def json(self):
+        img = ''
+        if self.img is not None:
+            img = self.img
         return {
             'id': self.id,
             'name': self.name,
-            'img': self.img,
+            'img': img,
             'rank': self.rank,
             'price': self.price,
             'avaliable': self.avaliable,

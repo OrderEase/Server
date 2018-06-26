@@ -5,9 +5,140 @@ from app.models import Order, Dish, OrderItem, db
 from time import strptime
 from app.login import login_required
 from flask_login import current_user
-
+from app.models import *
+import random
 
 api = Namespace('orders')
+
+@api.route('/test/')
+class Orders(Resource):
+    def get(self):
+        try:
+            # 新建菜单
+            menu = Menu.query.filter_by(id=100).first()
+            if menu is not None:
+                return {'message':'Menu already exist.'}, 200
+            menu = Menu()
+            menu.id = 100
+            menu.name = '测试菜单'
+            menu.used = 1
+            menu.delete = False
+            menu.restId = 1
+            db.session.add(menu)
+            db.session.commit()
+
+            # 新建2个类别, 每个类别4个菜
+            cat1 = Category()
+            cat1.id = 100
+            cat1.name = '荤菜'
+            cat1.rank = 0
+            cat1.delete = False
+            cat1.menuId = 100
+            db.session.add(cat1)
+            db.session.commit()
+            for j in [0, 1, 2, 3]:
+                dish = Dish()
+                dish.id = 100 + j
+                dish.name = '荤菜' + str(j)
+                dish.rank = j
+                dish.price = 15 + j * 5
+                dish.avaliable = 1
+                dish.stock = 99
+                dish.likes = j * 2 + 5
+                dish.description = '荤菜' + str(j)
+                dish.delete = False
+                dish.catId = 100
+                db.session.add(dish)
+                db.session.commit()
+
+            cat2 = Category()
+            cat2.id = 101
+            cat2.name = '素菜'
+            cat2.rank = 0
+            cat2.delete = False
+            cat2.menuId = 100
+            db.session.add(cat2)
+            db.session.commit()
+            for j in [0, 1, 2, 3]:
+                dish = Dish()
+                dish.id = 104 + j
+                dish.name = '素菜' + str(j)
+                dish.rank = j
+                dish.price = 35 + j * 5
+                dish.avaliable = 1
+                dish.stock = 99
+                dish.likes = j * 2 + 5
+                dish.description = '素菜' + str(j)
+                dish.delete = False
+                dish.catId = 101
+                db.session.add(dish)
+                db.session.commit()
+
+            # menuid=100, catid=100, 101, dishid=100,101,102,103,104,105,106,107
+            #                             price = 15, 20, 25, 30, 35, 40, 45, 50
+            # 新建1200个用户，userid=[1000, 2199]
+            for i in range(1000, 2200):
+                user = User()
+                user.id = i
+                user.username = 'username' + str(i)
+                user.authority = 'customer'
+                db.session.add(user)
+                db.session.commit()
+
+            # 从今天起, 前60天, 每天30-50订单
+            today = datetime.today()
+            for i in range(0, 60):
+                day = today + timedelta(days = -i)
+
+                order_num = random.randint(30, 50)
+                # 生成order_num个订单
+                for j in range(order_num):
+                    price = 0
+                    # 选1-3个菜
+                    dish_num = random.randint(1, 3)
+                    dishes = []
+                    items = []
+                    for k in range(dish_num):
+                        # 选一个菜id
+                        dishid = random.randint(100, 107)
+                        dish = Dish.query.filter_by(id=dishid).first()
+                        dishes.append(dish)
+                        # 有30%的概率点2份
+                        quantity = 1
+                        if random.random() < 0.3:
+                            quantity = 2
+                        price += dish.price * quantity
+                        
+                        orderitem = OrderItem()
+                        orderitem.dishId = dishid
+                        orderitem.quantity = quantity
+                        orderitem.finished = 1
+                        orderitem.time = day
+                        items.append(orderitem)
+
+                    order = Order()
+                    # 选一个用户
+                    order.uid = random.randint(1000, 2199)
+                    order.tableId = 'SB'
+                    order.total = price
+                    order.due = price
+                    order.isPay = 1
+                    order.payId = 'Fake pay'
+                    order.payWay = 'Bitcoin'
+                    order.payDate = day
+                    order.finished = 1
+                    for dish in dishes:
+                        order.dishes.append(dish)
+                    db.session.add(order)
+                    db.session.commit()
+                    for item in items:
+                        item.orderId = order.id
+                        db.session.add(item)
+                        db.session.commit()
+            return {'message': 'Create fake data successfully.'}, 200
+        except Exception as e:
+            print(e)
+            return {'message': 'Internal Server Error'}, 500
 
 @api.route('/cuser/')
 class Orders(Resource):
@@ -186,6 +317,7 @@ class Orders(Resource):
             found = False
             for item in items:
                 if item.dishId == dishId:
+                    dish = Dish.query.filter_by(id=dishId).first()
                     found = True
                     like = form.get('like')
                     if like is not None:
@@ -200,6 +332,8 @@ class Orders(Resource):
                             return {
                                 'message': 'Like should be 0 or 1, 1 means like'
                                 }, 400
+                        if item.like == 0 and like == 1:
+                            dish.like += 1
                         item.like = like
 
                     urge = form.get('urge')
