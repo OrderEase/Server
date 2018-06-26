@@ -258,8 +258,8 @@ class Promotion(db.Model):
         tmp = {
             'id': self.id,
             'theme': self.theme,
-            'begin': self.begin.strftime("%Y-%m-%d %H:%M:%S"),
-            'end': self.end.strftime("%Y-%m-%d %H:%M:%S"),
+            'begin': self.begin.strftime("%Y-%m-%d %H:%M"),
+            'end': self.end.strftime("%Y-%m-%d %H:%M"),
             'isend': self.isend
         }
         return 'id: {id}, 主题: {theme}, 开始时间: {begin}, 结束时间: {end}, 是否已结束: {isend}'.format(**tmp)
@@ -272,8 +272,8 @@ class Promotion(db.Model):
         return {
             'id': self.id,
             'theme': self.theme,
-            'begin': self.begin.strftime("%Y-%m-%d %H:%M:%S"),
-            'end': self.end.strftime("%Y-%m-%d %H:%M:%S"),
+            'begin': self.begin.strftime("%Y-%m-%d %H:%M"),
+            'end': self.end.strftime("%Y-%m-%d %H:%M"),
             'isend': self.isend,
             'rules': rules_list
         }

@@ -33,15 +33,27 @@ class Promotions(Resource):
                 return {'message': 'Theme is required.'}, 400
 
             begin = form.get('begin')
-            if begin is None :
+            if begin is not None:
+                try:
+                    begin = datetime.strptime(begin, "%Y-%m-%d %H:%M")
+                except Exception as e:
+                    print(e)
+                    return {'message': 'Wrong format of time'}, 400
+            else:
                 return {'message': 'Begin date is required.'}, 400
 
             end = form.get('end')
-            if end is None :
+            if end is not None:
+                try:
+                    end = datetime.strptime(end, "%Y-%m-%d %H:%M")
+                except Exception as e:
+                    print(e)
+                    return {'message': 'Wrong format of time'}, 400
+            else:
                 return {'message': 'End date is required.'}, 400
 
             isend = form.get('isend')
-            if (int(isend) != 1 and int(isend) != 2) or isend is None:
+            if (int(isend) != 1 and int(isend) != 0) or isend is None:
                 return {'message': 'Isend is required.'}, 400
 
             promotion = Promotion()
@@ -86,15 +98,27 @@ class Promotions(Resource):
                 return {'message': 'Theme is required.'}, 400
 
             begin = form.get('begin')
-            if begin is None :
+            if begin is not None:
+                try:
+                    begin = datetime.strptime(begin, "%Y-%m-%d %H:%M")
+                except Exception as e:
+                    print(e)
+                    return {'message': 'Wrong format of time'}, 400
+            else:
                 return {'message': 'Begin date is required.'}, 400
 
             end = form.get('end')
-            if end is None :
+            if end is not None:
+                try:
+                    end = datetime.strptime(end, "%Y-%m-%d %H:%M")
+                except Exception as e:
+                    print(e)
+                    return {'message': 'Wrong format of time'}, 400
+            else:
                 return {'message': 'End date is required.'}, 400
 
             isend = form.get('isend')
-            if (int(isend) != 1 and int(isend) != 2) or isend is None:
+            if (int(isend) != 0 and int(isend) != 1) or isend is None:
                 return {'message': 'Isend is required.'}, 400
 
             promotion = Promotion.query.filter_by(id=pid).first()

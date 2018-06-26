@@ -5,14 +5,11 @@ from app.models import Rule, Promotion, db
 from app.login import login_required
 from .promotion import api as api
 
-# api = Namespace('promotions')
-
 @api.route('/<pid>/rules')
 class CreateRules(Resource):
 
     @login_required(authority="manager")
     def post(self, pid):
-
         try:
             form = request.get_json(force=True)
 
