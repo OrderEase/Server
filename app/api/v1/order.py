@@ -154,6 +154,7 @@ class Orders(Resource):
                 db.session.add(user)
                 db.session.commit()
 
+            payWays = ['微信支付', '比特币', '支付宝', '银行卡']
             # 从今天起, 前60天, 每天30-50订单
             today = datetime.today()
             for i in range(0, 60):
@@ -193,7 +194,8 @@ class Orders(Resource):
                     order.due = price
                     order.isPay = 1
                     order.payId = 'Fake pay'
-                    order.payWay = 'Bitcoin'
+                    payWay = random.randint(0, 3)
+                    order.payWay = payWays[payWay]
                     order.payDate = day
                     order.finished = 1
                     for dish in dishes:
