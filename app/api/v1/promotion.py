@@ -9,13 +9,20 @@ api = Namespace('promotions')
 @api.route('/')
 class Promotions(Resource):
 
-    @login_required(authority="manager")
+    @login_required(authority="customer")
     def get(self):
         try:
             promotions_list = []
             promotions = Promotion.query.all()
-            for promotion in promotions:
-                promotions_list.append(promotion.json())
+
+            print(current_user.authority)
+            if current_user.authority == "customer":
+                for promotion in promotions:
+                    if not promotion.isend:
+                        promotions_list.append(promotion.json())
+            else:
+                for promotion in promotions:
+                    promotions_list.append(promotion.json())
 
             return { 'promotions': promotions_list }, 200
 

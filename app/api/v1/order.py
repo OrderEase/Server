@@ -96,7 +96,7 @@ class Orders(Resource):
                 dish.catId = 102
                 db.session.add(dish)
                 db.session.commit()
-            
+
             cat4 = Category()
             cat4.id = 103
             cat4.name = '酒水'
@@ -119,7 +119,7 @@ class Orders(Resource):
                 dish.catId = 103
                 db.session.add(dish)
                 db.session.commit()
-            
+
             cat5 = Category()
             cat5.id = 104
             cat5.name = '炖汤'
@@ -146,17 +146,19 @@ class Orders(Resource):
             # menuid=100, catid=100, 101, dishid=100-119
             #                             price = 15, 20, 25, 30, 35, 40, 45, 50
             # 新建1200个用户，userid=[1000, 2199]
+            today = datetime.today()
             for i in range(1000, 2200):
                 user = User()
                 user.id = i
                 user.username = 'username' + str(i)
                 user.authority = 'customer'
+                user.register_date = today + timedelta(days=int((random.random() - 1) * 30))
                 db.session.add(user)
                 db.session.commit()
 
             payWays = ['微信支付', '比特币', '支付宝', '银行卡']
             # 从今天起, 前60天, 每天30-50订单
-            today = datetime.today()
+
             for i in range(0, 60):
                 day = today + timedelta(days = -i)
 
@@ -168,6 +170,8 @@ class Orders(Resource):
                     dish_num = random.randint(1, 3)
                     dishes = []
                     items = []
+
+                    order_time = day + timedelta(minutes=random.random() * 1440)
                     for k in range(dish_num):
                         # 选一个菜id
                         dishid = random.randint(100, 119)
@@ -178,12 +182,12 @@ class Orders(Resource):
                         if random.random() < 0.3:
                             quantity = 2
                         price += dish.price * quantity
-                        
+
                         orderitem = OrderItem()
                         orderitem.dishId = dishid
                         orderitem.quantity = quantity
                         orderitem.finished = 1
-                        orderitem.time = day
+                        orderitem.time = order_time + timedelta(minutes=random.random() * 30)
                         items.append(orderitem)
 
                     order = Order()

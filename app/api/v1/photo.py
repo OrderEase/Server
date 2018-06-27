@@ -10,7 +10,7 @@ api = Namespace('photos')
 class PhotosRestrt(Resource):
 
     #上传店铺头像
-    @login_required(authority='manager')
+    @login_required(authority="manager")
     def post(self):
         try:
             filename = restrts_upload_set.save(request.files.get('file'))
@@ -25,7 +25,7 @@ class PhotosRestrt(Resource):
 class PhotosDish(Resource):
 
     #上传菜品图片
-    @login_required(authority='manager')
+    @login_required(authority="manager")
     def post(self):
         try:
             filename = dishes_upload_set.save(request.files.get('file'))

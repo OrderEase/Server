@@ -62,6 +62,7 @@ class BUserModifyPassword(Resource):
                 return {'message': 'New password is required.'}, 400
 
             buser = User.query.get(current_user.id)
+            # print(current_user.username)
             if old_password != buser.password:
                 return {'message': 'Old password wrong.'}, 401
 
@@ -96,12 +97,12 @@ class BUserLog(Resource):
 
             login_user(buser)
 
-            return {"message": "Successfully login."}, 200
+            return {"message": "Successfully login.", "authority": buser.authority}, 200
 
         except Exception as e:
             return {'message': 'Internal Server Error'}, 500
 
-    @login_required(authority="manager")
+    @login_required(authority='cook')
     def put(self):
         """Log out
         """

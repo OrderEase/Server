@@ -26,8 +26,8 @@ class Menus(Resource):
             name = form.get('name')
             if name is None:
                 ret = {'message': 'Menu name is required'}
-                return Response(json.dumps(ret), 
-                        status=400, 
+                return Response(json.dumps(ret),
+                        status=400,
                         mimetype='application/json')
 
 
@@ -40,15 +40,15 @@ class Menus(Resource):
                 print(e)
                 ret = {'message': ('Used must be 0 or 1,'
                             ' 1 means in use')}
-                return Response(json.dumps(ret), 
-                        status=400, 
+                return Response(json.dumps(ret),
+                        status=400,
                         mimetype='application/json')
 
             if used != 0 and used != 1:
                 ret = {'message': ('Used must be 0 or 1,'
                             ' 1 means in use')}
-                return Response(json.dumps(ret), 
-                        status=400, 
+                return Response(json.dumps(ret),
+                        status=400,
                         mimetype='application/json')
 
             menu = Menu()
@@ -63,18 +63,18 @@ class Menus(Resource):
                 'message': 'Add a new menu successfully',
                 'id': menu.id
                 }
-            return Response(json.dumps(ret), 
-                        status=200, 
+            return Response(json.dumps(ret),
+                        status=200,
                         mimetype='application/json')
         except Exception as e:
             print(e)
             ret = {'message': 'Internal Server Error'}
-            return Response(json.dumps(ret), 
+            return Response(json.dumps(ret),
                         status=500,
                         mimetype='application/json')
-    
+
     # 获取所有菜单
-    @login_required(authority='manager')
+    @login_required(authority='cook')
     def get(self):
 
         try:
@@ -100,7 +100,7 @@ class Menus(Resource):
         menu = Menu.query.filter_by(used=1).first()
         if menu is None or menu.delete is True:
             return {'message': 'Menu not found'}, 404
-        
+
         content = []
         for cat in menu.cats:
             t_dishes = []
@@ -172,7 +172,7 @@ class Menus(Resource):
         menu = Menu.query.filter_by(id=menuid).first()
         if menu is None or menu.delete is True:
             return {'message': 'Menu not found'}, 404
-        
+
         menu.delete = True
         menu.restId = -1
         db.session.commit()
@@ -237,15 +237,15 @@ class Categories(Resource):
         category = Category.query.filter_by(id=catid).first()
         if category is None or category.delete is True:
             return {'message': 'Category not found'}, 404
-        
+
         if category.menuId != menuid:
             return {'message': 'Category not in menu'}, 400
-        
+
         category.delete = True
         category.menuId = -1
         db.session.commit()
         return {'message': 'Successfully delete.'}, 200
-    
+
     # 修改类别
     @login_required(authority='manager')
     def put(self, menuid, catid):
@@ -254,10 +254,10 @@ class Categories(Resource):
             category = Category.query.filter_by(id=catid).first()
             if category is None or category.delete is True:
                 return {'message': 'Category not found'}, 404
-            
+
             if category.menuId != menuid:
                 return {'message': 'Category not in menu'}, 400
-                
+
             form = request.get_json(force=True)
 
             name = form.get('name')
@@ -285,7 +285,7 @@ class Categories(Resource):
 # Dish
 @api.route('/<int:menuid>/categories/<int:catid>/dishes/')
 class Dishes(Resource):
-    
+
     # 新建菜品
     @login_required(authority='manager')
     def post(self, menuid, catid):
@@ -296,7 +296,7 @@ class Dishes(Resource):
             category = Category.query.filter_by(id=catid).first()
             if category is None or category.delete is True:
                 return {'message': 'Bad category'}, 400
-            
+
             if category.menuId != menuid:
                 return {'message': 'Bad menu'}, 400
 
@@ -314,7 +314,7 @@ class Dishes(Resource):
             except Exception as e:
                 print(e)
                 return {'message': 'Dish rank must be integer'}, 400
-            
+
             img = form.get('img')
             if img is None:
                 img = 'https://raw.githubusercontent.com/OrderEase/Server/master/assets/default.png'
@@ -327,7 +327,7 @@ class Dishes(Resource):
             except Exception as e:
                 print(e)
                 return {'message': 'Price must be float number'}, 400
-            
+
             stock = form.get('stock')
             if stock is None:
                 return {'message': 'Dish stock is required'}, 400
@@ -351,12 +351,12 @@ class Dishes(Resource):
                 return {
                     'message': 'Avaliable must be 0 or 1, 1 means avaliable'
                     }, 400
-            
+
             description = form.get('description')
             if description is None:
                 description = ""
 
-            
+
             dish.name = name
             dish.rank = rank
             dish.img = img
@@ -393,7 +393,7 @@ class Dishes(Resource):
 
 @api.route('/<int:menuid>/categories/<int:catid>/dishes/<int:dishid>')
 class Dishes(Resource):
-    
+
     # 修改菜品
     @login_required(authority='manager')
     def put(self, menuid, catid, dishid):
@@ -408,7 +408,7 @@ class Dishes(Resource):
             category = Category.query.filter_by(id=catid).first()
             if category is None or category.delete is True:
                 return {'message': 'Category not found'}, 404
-            
+
             if category.menuId != menuid:
                 return {'message': 'Category not in menu'}, 400
 
@@ -426,12 +426,12 @@ class Dishes(Resource):
                     print(e)
                     return {'message': 'Dish rank must be integer'}, 400
                 dish.rank = rank
-            
-            
+
+
             img = form.get('img')
             if img is not None:
                 dish.img = img
-            
+
             price = form.get('price')
             if price is not None:
                 try:
@@ -440,7 +440,7 @@ class Dishes(Resource):
                     print(e)
                     return {'message': 'Price must be float number'}, 400
                 dish.price = price
-            
+
             stock = form.get('stock')
             if stock is not None:
                 try:
@@ -449,7 +449,7 @@ class Dishes(Resource):
                     print(e)
                     return {'message': 'Dish stock must be integer'}, 400
                 dish.stock = stock
-            
+
             avaliable = form.get('avaliable')
             if avaliable is not None:
                 try:
@@ -464,7 +464,7 @@ class Dishes(Resource):
                         'message': 'Avaliable must be 0 or 1, 1 means avaliable'
                         }, 400
                 dish.avaliable = avaliable
-            
+
             description = form.get('description')
             if description is not None:
                 dish.description = description
@@ -477,7 +477,7 @@ class Dishes(Resource):
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
-    
+
     # 获取一个菜
     @login_required(authority='customer')
     def get(self, menuid, catid, dishid):
@@ -490,7 +490,7 @@ class Dishes(Resource):
         category = Category.query.filter_by(id=catid).first()
         if category is None or category.delete is True:
             return {'message': 'Category not found'}, 404
-        
+
         if category.menuId != menuid:
             return {'message': 'Category not in menu'}, 400
 
@@ -509,10 +509,10 @@ class Dishes(Resource):
         category = Category.query.filter_by(id=catid).first()
         if category is None or category.delete is True:
             return {'message': 'Category not found'}, 404
-        
+
         if category.menuId != menuid:
             return {'message': 'Category not in menu'}, 400
-        
+
         dish.delete = True
         dish.catId = -1
         db.session.commit()
