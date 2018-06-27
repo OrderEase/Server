@@ -54,7 +54,7 @@ class Orders(Resource):
             cat2 = Category()
             cat2.id = 101
             cat2.name = '素菜'
-            cat2.rank = 0
+            cat2.rank = 1
             cat2.delete = False
             cat2.menuId = 100
             db.session.add(cat2)
@@ -74,7 +74,76 @@ class Orders(Resource):
                 db.session.add(dish)
                 db.session.commit()
 
-            # menuid=100, catid=100, 101, dishid=100,101,102,103,104,105,106,107
+            cat3 = Category()
+            cat3.id = 102
+            cat3.name = '小吃'
+            cat3.rank = 2
+            cat3.delete = False
+            cat3.menuId = 100
+            db.session.add(cat3)
+            db.session.commit()
+            for j in [0, 1, 2, 3]:
+                dish = Dish()
+                dish.id = 108 + j
+                dish.name = '小吃' + str(j)
+                dish.rank = j
+                dish.price = 15 + j * 5
+                dish.avaliable = 1
+                dish.stock = 99
+                dish.likes = j * 2 + 5
+                dish.description = '小吃' + str(j)
+                dish.delete = False
+                dish.catId = 102
+                db.session.add(dish)
+                db.session.commit()
+            
+            cat4 = Category()
+            cat4.id = 103
+            cat4.name = '酒水'
+            cat4.rank = 3
+            cat4.delete = False
+            cat4.menuId = 100
+            db.session.add(cat4)
+            db.session.commit()
+            for j in [0, 1, 2, 3]:
+                dish = Dish()
+                dish.id = 112 + j
+                dish.name = '酒水' + str(j)
+                dish.rank = j
+                dish.price = 15 + j * 20
+                dish.avaliable = 1
+                dish.stock = 99
+                dish.likes = j * 2 + 5
+                dish.description = '酒水' + str(j)
+                dish.delete = False
+                dish.catId = 103
+                db.session.add(dish)
+                db.session.commit()
+            
+            cat5 = Category()
+            cat5.id = 104
+            cat5.name = '炖汤'
+            cat5.rank = 4
+            cat5.delete = False
+            cat5.menuId = 100
+            db.session.add(cat5)
+            db.session.commit()
+            for j in [0, 1, 2, 3]:
+                dish = Dish()
+                dish.id = 116 + j
+                dish.name = '炖汤' + str(j)
+                dish.rank = j
+                dish.price = 15 + j * 6
+                dish.avaliable = 1
+                dish.stock = 99
+                dish.likes = j * 2 + 5
+                dish.description = '炖汤' + str(j)
+                dish.delete = False
+                dish.catId = 104
+                db.session.add(dish)
+                db.session.commit()
+
+            # menuid=100, catid=100, 101, dishid=100-119
             #                             price = 15, 20, 25, 30, 35, 40, 45, 50
             # 新建1200个用户，userid=[1000, 2199]
             for i in range(1000, 2200):
@@ -100,7 +169,7 @@ class Orders(Resource):
                     items = []
                     for k in range(dish_num):
                         # 选一个菜id
-                        dishid = random.randint(100, 107)
+                        dishid = random.randint(100, 119)
                         dish = Dish.query.filter_by(id=dishid).first()
                         dishes.append(dish)
                         # 有30%的概率点2份
