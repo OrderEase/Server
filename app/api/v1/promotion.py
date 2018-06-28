@@ -16,7 +16,6 @@ class Promotions(Resource):
             promotions_list = []
             promotions = Promotion.query.all()
 
-            print(current_user.authority)
             if current_user.authority == "customer":
                 for promotion in promotions:
                     if not promotion.isend:

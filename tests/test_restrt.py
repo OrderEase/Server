@@ -4,7 +4,7 @@
 # import test_data
 
 # class FlaskClientTest(unittest.TestCase):
-    
+
 #     menu = test_data.menu
 #     dishes = test_data.dishes
 #     category = test_data.category
@@ -27,7 +27,7 @@
 #     # 新建菜单, 使用self.menu
 #     # 新增1个菜单, 2个类别, 4个菜品
 #     def createMenu(self):
-#         response = self.client.post('http://localhost:5000/api/menus/', 
+#         response = self.client.post('http://localhost:5000/api/menus/',
 #                         data=json.dumps(self.menu))
 #         self.assertTrue(200==response.status_code)
 #         data = response.get_data()
@@ -40,7 +40,7 @@
 
 #         # 新建2个类别
 #         url = 'http://localhost:5000/api/menus/' + str(menuid) + '/categories/'
-#         response = self.client.post(url, 
+#         response = self.client.post(url,
 #                         data=json.dumps(self.category))
 #         self.assertTrue(200==response.status_code)
 #         data = response.get_data()
@@ -50,7 +50,7 @@
 
 #         self.category['name'] = '素菜'
 #         self.category['rank'] = 2
-#         response = self.client.post(url, 
+#         response = self.client.post(url,
 #                         data=json.dumps(self.category))
 #         self.assertTrue(200==response.status_code)
 #         data = response.get_data()
@@ -61,19 +61,19 @@
 #         # 新建4个菜品
 #         url = 'http://localhost:5000/api/menus/' \
 #                 + str(menuid) + '/categories/' + str(catid2) + '/dishes/'
-#         response = self.client.post(url, 
+#         response = self.client.post(url,
 #                         data=json.dumps(self.dishes[0]))
 #         self.assertTrue(200==response.status_code)
-#         response = self.client.post(url, 
+#         response = self.client.post(url,
 #                         data=json.dumps(self.dishes[1]))
 #         self.assertTrue(200==response.status_code)
 
 #         url = 'http://localhost:5000/api/menus/' \
 #                 + str(menuid) + '/categories/' + str(catid1) + '/dishes/'
-#         response = self.client.post(url, 
+#         response = self.client.post(url,
 #                         data=json.dumps(self.dishes[2]))
 #         self.assertTrue(200==response.status_code)
-#         response = self.client.post(url, 
+#         response = self.client.post(url,
 #                         data=json.dumps(self.dishes[3]))
 #         self.assertTrue(200==response.status_code)
 
@@ -85,7 +85,7 @@
 #             "username": "aaa",
 #             "password": "123",
 #             "authority": "manager"})
-        
+
 #         self.assertTrue(response.status_code == 200)
 
 #         response = self.client.post('http://localhost:5000/api/busers/session', data={
@@ -111,10 +111,10 @@
 #         data.decode('utf-8')
 #         data = json.loads(data)
 #         self.assertTrue(1==data.get('id'))
-    
+
 #     # 测试修改餐馆
 #     def test_modifyCategory(self):
-        
+
 #         # 新建菜单
 #         id = self.createFullMenu()
 

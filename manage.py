@@ -4,7 +4,7 @@ from app import create_app, db
 from flask_script import Manager, Shell, Server
 import app.gen_data as data_generator
 
-app = create_app('Development')
+app = create_app('Test')
 manager = Manager(app)
 
 @manager.command
@@ -15,6 +15,8 @@ def test(coverage=False):
     import unittest
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
+
+    data_generator.remove_data()
 
 @manager.command
 def gen_data(coverage=False):
@@ -36,5 +38,3 @@ def runserver(coverage=False):
 
 if __name__ == '__main__':
     manager.run()
-
-# 设置 travis 集成
