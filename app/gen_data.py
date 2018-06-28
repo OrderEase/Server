@@ -265,3 +265,70 @@ def gen_fake_data():
         print(e)
         print('Internal Server Error')
 
+def gen_unfinished_orders():
+    try:
+        # db.drop_all()
+        db.create_all()
+
+        print("Generating unfinished orders...")
+
+        today = datetime.today()
+
+        payWays = ['微信支付', '比特币', '支付宝', '银行卡']
+        # 从今天起, 前60天, 每天30-50订单
+
+        day = today
+
+        order_num = random.randint(15, 25)
+        # 生成order_num个订单
+        for j in range(order_num):
+            price = 0
+            # 选1-3个菜
+            dish_num = random.randint(1, 3)
+            dishes = []
+            items = []
+
+            order_time = day + timedelta(minutes=random.random() * 1440)
+            for k in range(dish_num):
+                # 选一个菜id
+                dishid = random.randint(100, 119)
+                dish = Dish.query.filter_by(id=dishid).first()
+                dishes.append(dish)
+                # 有30%的概率点2份
+                quantity = 1
+                if random.random() < 0.3:
+                    quantity = 2
+                price += dish.price * quantity
+
+                orderitem = OrderItem()
+                orderitem.dishId = dishid
+                orderitem.quantity = quantity
+                orderitem.finished = 0
+                items.append(orderitem)
+
+            order = Order()
+            # 选一个用户
+            order.uid = random.randint(1000, 2199)
+            order.tableId = 'SB'
+            order.total = price
+            order.due = price
+            order.isPay = 1
+            order.payId = 'Fake pay'
+            payWay = random.randint(0, 3)
+            order.payWay = payWays[payWay]
+            order.payDate = order_time
+            order.finished = 0
+            for dish in dishes:
+                order.dishes.append(dish)
+            db.session.add(order)
+            db.session.commit()
+            for item in items:
+                item.orderId = order.id
+                db.session.add(item)
+                db.session.commit() 
+        print('Create unfinished orders successfully.')
+        db.session.remove()
+
+    except Exception as e:
+        print(e)
+        print('Internal Server Error')

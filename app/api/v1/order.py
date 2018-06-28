@@ -326,14 +326,20 @@ class Orders(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-@api.route('/buser/')
+@api.route('/buser')
 class Orders(Resource):
 
     # 商家获取全部订单
     @login_required(authority='cook')
     def get(self):
         try:
-            orders = Order.query.all()
+            finished = request.args.get('finished')
+            if finished is None:
+                orders = Order.query.all()
+            else:
+                finished = int(finished)
+                orders = Order.query.filter_by(finished=finished).all()
+            
 
             ret = []
             for order in orders:
