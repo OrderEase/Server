@@ -12,9 +12,9 @@ Test in python3.6.
 **You should first set the following environment variable that you need. For instance, **
 
 ```python
-PRODUCTION_DATABASE_URI="mysql://username:password@localhost:3306/test?charset=utf8"
+PRODUCTION_DATABASE_URI="mysql://username:password@localhost:3306/prod?charset=utf8"
 DEVELOPMENT_DATABASE_URI="mysql://username:password@localhost:3306/dev?charset=utf8"
-TEST_DATABASE_URI="mysql://username:password@localhost:3306/prod?charset=utf8"
+TEST_DATABASE_URI="mysql://username:password@localhost:3306/test?charset=utf8"
 SECRET_KEY = 'Sdna2MshdG39DOA2skajd'
 ```
 

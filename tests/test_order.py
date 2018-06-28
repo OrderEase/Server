@@ -2,6 +2,7 @@ import unittest
 from app import create_app, db
 import json
 import test_data
+import app.gen_data as data_generator
 
 class FlaskClientTest(unittest.TestCase):
 
@@ -16,6 +17,7 @@ class FlaskClientTest(unittest.TestCase):
         self.app_context.push()
         db.create_all()
         self.client = self.app.test_client()
+        data_generator.gen_basic_data()
 
         # self.register_and_login()
         response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
@@ -30,8 +32,8 @@ class FlaskClientTest(unittest.TestCase):
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
         self.login = False
 
+        data_generator.remove_data()
         db.session.remove()
-        # db.drop_all()
         self.app_context.pop()
 
     # 新建菜单, 使用self.menu

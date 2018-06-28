@@ -9,8 +9,11 @@ class FlaskClientTest(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.client = self.app.test_client()
+        data_generator.gen_basic_data()
 
     def tearDown(self):
+        data_generator.remove_data()
+        db.session.remove()
         self.app_context.pop()
 
     def test_login(self):

@@ -14,12 +14,12 @@ services:
 # install dependencies
 before_install:
   - mysql -e 'CREATE DATABASE test DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
+  - mysql -e 'CREATE DATABASE dev DEFAULT CHARSET utf8 COLLATE utf8_general_ci;'
 
 install:
   - pip3 install -r requirements.txt
 
 before_script:
-  # - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n"
   - python manage.py gen_data
 
 script:

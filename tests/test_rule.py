@@ -1,6 +1,7 @@
 import unittest
 from app import create_app, db
 import json
+import app.gen_data as data_generator
 
 class FlaskClientTest(unittest.TestCase):
 
@@ -26,6 +27,7 @@ class FlaskClientTest(unittest.TestCase):
         self.app_context.push()
         db.create_all()
         self.client = self.app.test_client()
+        data_generator.gen_basic_data()
 
         if not self.gen_data:
             response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
@@ -51,10 +53,13 @@ class FlaskClientTest(unittest.TestCase):
             self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def tearDown(self):
+        data_generator.remove_data()
         db.session.remove()
         self.app_context.pop()
 
     def test_add_delete_Rule(self):
+        rid = 0
+
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
             'requirement': 100,
@@ -83,27 +88,28 @@ class FlaskClientTest(unittest.TestCase):
         self.assertTrue('Requirement is required and not negative.' in response.get_data(as_text=True))
 
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
-            'mode': 2,
-            'requirement': 100,
-            'discount': -10
-        }))
-        response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
             'requirement': 100,
             'discount': 10
         }))
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        rid = data.get('id')
         self.assertTrue(200 == response.status_code)
 
-        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/2')
+        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/%d' % rid)
         self.assertTrue(200 == response.status_code)
 
-        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/2')
+        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/%d' % rid)
         self.assertTrue('rule not found' in response.get_data(as_text=True))
 
         response = self.client.put('http://localhost:5000/api/busers/session')
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def test_getRule(self):
+        rid = 0
+
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
             'requirement': 100,
@@ -119,11 +125,22 @@ class FlaskClientTest(unittest.TestCase):
         }))
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
 
-        response = self.client.get('http://localhost:5000/api/promotions/1/rules/1')
-        # print(response.get_data(as_text=True))
-        self.assertTrue('{"id": 1, "mode": 1, "requirement": 100.0, "discount": 10.0}' in response.get_data(as_text=True))
+        response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
+            'mode': 1,
+            'requirement': 100,
+            'discount': 10
+        }))
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        rid = data.get('id')
+        self.assertTrue(200 == response.status_code)
 
-        response = self.client.get('http://localhost:5000/api/promotions/1/rules/2')
+        response = self.client.get('http://localhost:5000/api/promotions/1/rules/%d' % rid)
+        # print(response.get_data(as_text=True))
+        self.assertTrue(200 == response.status_code)
+
+        response = self.client.get('http://localhost:5000/api/promotions/1/rules/%d' % (rid + 1))
         # print(response.get_data(as_text=True))
         self.assertTrue('rule not found' in response.get_data(as_text=True))
 
@@ -131,6 +148,7 @@ class FlaskClientTest(unittest.TestCase):
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def test_modifyRule(self):
+        rid = 0
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
             'requirement': 100,
@@ -146,23 +164,34 @@ class FlaskClientTest(unittest.TestCase):
         }))
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
 
-        response = self.client.put('http://localhost:5000/api/promotions/1/rules/1', data=json.dumps({
+        response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
+            'mode': 1,
+            'requirement': 100,
+            'discount': 10
+        }))
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        rid = data.get('id')
+        self.assertTrue(200 == response.status_code)
+
+        response = self.client.put('http://localhost:5000/api/promotions/1/rules/%d' % rid, data=json.dumps({
             'mode': 2,
             'requirement': 666,
             'discount': 6
         }))
-        self.assertTrue('{"id": 1, "mode": 2, "requirement": 666.0, "discount": 6.0}' in response.get_data(as_text=True))
+        self.assertTrue('666' in response.get_data(as_text=True))
 
-        response = self.client.put('http://localhost:5000/api/promotions/1/rules/2', data=json.dumps({
+        response = self.client.put('http://localhost:5000/api/promotions/1/rules/%d' % (rid + 1), data=json.dumps({
             'mode': 2,
             'requirement': 666,
             'discount': 6
         }))
         self.assertTrue('rule not found' in response.get_data(as_text=True))
 
-        response = self.client.get('http://localhost:5000/api/promotions/1/rules/1')
+        response = self.client.get('http://localhost:5000/api/promotions/1/rules/%d' % rid)
         # print(response.get_data(as_text=True))
-        self.assertTrue('{"id": 1, "mode": 2, "requirement": 666.0, "discount": 6.0}' in response.get_data(as_text=True))
+        self.assertTrue('666.0' in response.get_data(as_text=True))
 
         response = self.client.put('http://localhost:5000/api/busers/session')
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))

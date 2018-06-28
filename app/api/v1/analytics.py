@@ -8,18 +8,6 @@ import operator
 
 api = Namespace('analytics')
 
-"""APIs:
-analytics/turnover/?days=7  turnoverSevenDays  交易金额
-analytics/turnover/?days=30  turnoverThirtyDays
-analytics/count/card  countCard  今天的数据
-analytics/count/orders  orderCount
-analytics/count/payWay  payWay
-analytics/count/finishTime  finishTime  分钟
-analytics/count/summary  summaryData  指定时间段
-analytics/rank/sale  saleRank
-analytics/rank/likes  likeRank
-"""
-
 def change_format(origin_dict):
     name_value_list = []
     for key in origin_dict.keys():
@@ -88,7 +76,10 @@ class CountCard(Resource):
                 for item in order.items:
                     today_dish_quantity += item.quantity
 
-            return {'totalUser': len(today_users_list), "newUser": len(today_new_users), "turnover": today_due, "dish": today_dish_quantity}, 200
+            return {'todayUser': len(today_users_list),
+                    "todayNewUser": len(today_new_users),
+                    "todayTurnover": today_due,
+                    "todayDish": today_dish_quantity}, 200
 
         except Exception as e:
             print(e)
@@ -103,7 +94,7 @@ class CountOrders(Resource):
         try:
             weekday = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
             count = [0 for x in range(7)]
-            orders = Order.query.all()
+            orders = Order.query.filter(Order.finished == 1).all()
 
             for order in orders:
                 count[order.payDate.weekday()] += 1
@@ -192,7 +183,8 @@ class CountSummary(Resource):
                 start = datetime.strptime(request.args.get('start'), "%Y-%m-%d")
                 end = datetime.strptime(request.args.get('end'), "%Y-%m-%d")
             else:
-                tmp_orders = Order.query.order_by(Order.payDate).all()
+                tmp_orders = Order.query.filter(Order.finished == 1).order_by(Order.payDate).all()
+                # print(tmp_orders)
                 if len(tmp_orders) == 0:
                     start = datetime.today().date()
                     end = start + timedelta(days=7)
@@ -200,12 +192,15 @@ class CountSummary(Resource):
                     start = tmp_orders[0].payDate.date()
                     end = tmp_orders[len(tmp_orders) - 1].payDate.date()
 
+            # print(start)
+            # print(end)
+
             summary_list = []
 
             day_count = (end - start).days + 1
             for date in [d for d in (start + timedelta(n) for n in range(day_count))]:
                 next_date = date + timedelta(days=1)
-                orders = Order.query.filter(Order.payDate > date, Order.payDate < next_date).all()
+                orders = Order.query.filter(Order.payDate > date, Order.payDate < next_date, Order.finished == 1).all()
 
                 total_order_time = 0
                 total_dish_finish_time = 0
@@ -230,12 +225,12 @@ class CountSummary(Resource):
                     total_order_time += last_dish_finish_time
 
                 summary_list.append({"date": date.strftime("%Y-%m-%d"),
-                                     "order": len(orders),
-                                     "dish": total_dish_num,
-                                     "avgOrder": round(total_order_time / len(orders), 1) if len(orders) > 0 else 0, # 平均完成时间
-                                     "avgDish": round(total_dish_finish_time / total_dish_num, 1) if total_dish_num > 0 else 0,
-                                     "due": total_due,
-                                     "total": total})
+                                     "dayOrder": len(orders),
+                                     "dayDish": total_dish_num,
+                                     "dayAvgOrderFinishTime": round(total_order_time / len(orders), 1) if len(orders) > 0 else 0, # 平均完成时间
+                                     "dayAvgDishFinishTime": round(total_dish_finish_time / total_dish_num, 1) if total_dish_num > 0 else 0,
+                                     "dayDue": total_due,
+                                     "dayTotal": total})
 
             return summary_list, 200
 
