@@ -21,6 +21,7 @@ def gen_data(coverage=False):
 
     if app.config['GEN_FAKE_DATA']:
         data_generator.gen_fake_data()
+        data_generator.gen_unfinished_orders()
 
 @manager.command
 def del_data(coverage=False):
