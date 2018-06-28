@@ -1,6 +1,7 @@
 import unittest
 import json
 from app import create_app, db
+import app.gen_data as data_generator
 
 class FlaskClientTest(unittest.TestCase):
     def setUp(self):
@@ -9,8 +10,10 @@ class FlaskClientTest(unittest.TestCase):
         self.app_context.push()
         db.create_all()
         self.client = self.app.test_client()
+        data_generator.gen_basic_data()
 
     def tearDown(self):
+        data_generator.remove_data()
         db.session.remove()
         self.app_context.pop()
 

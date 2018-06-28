@@ -19,7 +19,6 @@ install:
   - pip3 install -r requirements.txt
 
 before_script:
-  # - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n"
   - python manage.py gen_data
 
 script:

@@ -15,7 +15,7 @@ def gen_basic_data():
             print("Basic data exists.")
             return
 
-        print("Generating basic data...")
+        # print("Generating basic data...")
 
         today = datetime.today()
 
@@ -352,7 +352,7 @@ def gen_unfinished_orders():
             for item in items:
                 item.orderId = order.id
                 db.session.add(item)
-                db.session.commit() 
+                db.session.commit()
         print('Create unfinished orders successfully.')
         db.session.remove()
 

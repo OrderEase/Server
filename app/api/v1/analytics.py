@@ -94,7 +94,7 @@ class CountOrders(Resource):
         try:
             weekday = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
             count = [0 for x in range(7)]
-            orders = Order.query.all()
+            orders = Order.query.filter(Order.finished == 1).all()
 
             for order in orders:
                 count[order.payDate.weekday()] += 1
@@ -183,7 +183,7 @@ class CountSummary(Resource):
                 start = datetime.strptime(request.args.get('start'), "%Y-%m-%d")
                 end = datetime.strptime(request.args.get('end'), "%Y-%m-%d")
             else:
-                tmp_orders = Order.query.order_by(Order.payDate).all()
+                tmp_orders = Order.query.filter(Order.finished == 1).order_by(Order.payDate).all()
                 # print(tmp_orders)
                 if len(tmp_orders) == 0:
                     start = datetime.today().date()
