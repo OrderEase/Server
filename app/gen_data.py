@@ -6,7 +6,6 @@ import random
 def remove_data():
     db.drop_all()
 
-
 def gen_basic_data():
     try:
         # db.drop_all()

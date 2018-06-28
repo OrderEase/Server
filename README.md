@@ -9,14 +9,16 @@
 
 Test in python3.6.
 
-To connect to your own DB, you should create your own `instance/config.py` at root directory, such as:
+**You should first set the following environment variable that you need. For instance, **
 
 ```python
-SQLALCHEMY_DATABASE_URI="mysql://username:password@localhost:3306/test?charset=utf8"
-SQLALCHEMY_TRACK_MODIFICATIONS=True
+PRODUCTION_DATABASE_URI="mysql://username:password@localhost:3306/test?charset=utf8"
+DEVELOPMENT_DATABASE_URI="mysql://username:password@localhost:3306/dev?charset=utf8"
+TEST_DATABASE_URI="mysql://username:password@localhost:3306/prod?charset=utf8"
 SECRET_KEY = 'Sdna2MshdG39DOA2skajd'
-GEN_FAKE_DATA = True
 ```
+
+The default config is in  `/app/config.py`.
 
 Create the virtual environmet:
 
@@ -42,13 +44,13 @@ You should create basic data first:
 python manage.py gen_data
 ```
 
-Start the server:
+Start the server, running in DEVELOPMENT config:
 
 ```shell
 python manage.py runserver
 ```
 
-Run all the unit tests: (not finished)
+Run all the unit tests. It uses TEST_DATABASE_URI.
 
 ```python
 python manage.py test
