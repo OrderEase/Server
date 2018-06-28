@@ -13,14 +13,6 @@ class FlaskClientTest(unittest.TestCase):
     def tearDown(self):
         self.app_context.pop()
 
-    # def test_register(self):
-    #     response = self.client.post('http://localhost:5000/api/busers/', data=json.dumps({
-    #         "username": "aaabbb",
-    #         "password": "1232",
-    #         "authority": "manager"}))
-    #     # print(response.get_data(as_text=True))
-    #     self.assertTrue(response.status_code == 200)
-
     def test_login(self):
         response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
             "username": "manager",

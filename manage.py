@@ -38,5 +38,3 @@ def runserver(coverage=False):
 
 if __name__ == '__main__':
     manager.run()
-
-# 设置 travis 集成

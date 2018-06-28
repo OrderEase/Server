@@ -26,32 +26,27 @@ def change_format(origin_dict):
         name_value_list.append({'name': key, 'value': origin_dict[key]})
     return name_value_list
 
-# ok
+
 @api.route('/turnover')
 class GetTurnover(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             days = int(request.args.get('days'))
-            # print(days)
             if days != 7 and days != 30:
                 return {'message': 'Only support 7 or 30 query days.'}, 400
 
             categories = Category.query.filter(Category.id > 0).all()
-            # categories_dict = {}
             data_dict = {}
 
-            # print(categories)
             for category in categories:
                 data_dict[category.name] = {'name': category.name, 'data': [0 for x in range(days)]}
-                # categories_dict[category.id] =
 
             dishes = Dish.query.order_by(Dish.id).all()
             dishes_dict = {}
             for dish in dishes:
                 dishes_dict[dish.id] = dish
-            # print(dishes_dict)
 
             xAxis = []
             for i in range(days):
@@ -61,23 +56,18 @@ class GetTurnover(Resource):
                 orders = Order.query.filter(Order.payDate >= date, Order.payDate < date + timedelta(days=1)).all()
                 for order in orders:
                     for item in order.items:
-                        # print(item)
-                        # print(data_dict[dishes_dict[item.dishId].categories.name])
                         data_dict[dishes_dict[item.dishId].categories.name]['data'][i] += dishes_dict[item.dishId].price
-                        # print(data_dict[dishes_dict[item.dishId].categories].price)
-                        # data_dict[dishes_dict[item.dishId].categories] = dishes_dict[item.dishId].price
-            # print(list(data_dict.values()))
             return {"xAxis": xAxis, "data": list(data_dict.values())}, 200
 
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-# ok
+
 @api.route('/count/card')
 class CountCard(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             date = datetime.today().date()
@@ -104,11 +94,11 @@ class CountCard(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-# ok
+
 @api.route('/count/orders')
 class CountOrders(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             weekday = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
@@ -118,18 +108,16 @@ class CountOrders(Resource):
             for order in orders:
                 count[order.payDate.weekday()] += 1
 
-            # print(change_format(dict(zip(weekday, count))))
             return change_format(dict(zip(weekday, count))), 200
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
 
-# ok
 @api.route('/count/payway')
 class CountPayWay(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             payway_dict = {}
@@ -146,11 +134,10 @@ class CountPayWay(Resource):
             return {'message': 'Internal Server Error'}, 500
 
 
-# ok
 @api.route('/count/finishtime')
 class CountFinishTime(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             max_order_finish_time = 0
@@ -162,8 +149,6 @@ class CountFinishTime(Resource):
 
             orders = Order.query.filter(Order.finished == 1).all()
             for order in orders:
-                if order.finished == 0:
-                    continue
                 last_dish_finish_time = 0
                 for dish in order.items:
                     dish_finish_time = (dish.time - order.payDate).seconds / 60
@@ -198,7 +183,7 @@ class CountFinishTime(Resource):
 @api.route('/summary')
 class CountSummary(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             # 两端都是包含
@@ -261,11 +246,11 @@ class CountSummary(Resource):
             return {'message': 'Internal Server Error'}, 500
 
 
-# ok
+
 @api.route('/rank/likes')
 class CreateRules(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             dishes = Dish.query.order_by(Dish.likes.desc()).all()
@@ -281,11 +266,11 @@ class CreateRules(Resource):
             return {'message': 'Internal Server Error'}, 500
 
 
-# ok
+
 @api.route('/rank/sales')
 class CreateRules(Resource):
 
-    # @login_required(authority="manager")
+    @login_required(authority="manager")
     def get(self):
         try:
             dishes = Dish.query.order_by(Dish.id).all()
@@ -302,7 +287,6 @@ class CreateRules(Resource):
                     dish_sale_dict[dishes_dict[item.dishId].name] += item.quantity
 
             dish_sale_dict = dict(sorted(dish_sale_dict.items(), key=lambda k: k[1], reverse=True))
-            # print(change_format(dish_sale_dict))
             return change_format(dish_sale_dict), 200
 
         except Exception as e:
