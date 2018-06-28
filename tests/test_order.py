@@ -286,10 +286,20 @@ class FlaskClientTest(unittest.TestCase):
                         data=json.dumps({'payId':123}))
         self.assertTrue(200==response.status_code)
 
+        url = 'http://localhost:5000/api/orders/cuser/oid/' + str(id1)
+        response = self.client.get(url)
+        self.assertTrue(200==response.status_code)
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        ois = data.get('orderItems')
+        self.assertTrue(ois is not None)
+        oiid = ois[0].get('id')
+
         # 测试催单和点赞
         url = 'http://localhost:5000/api/orders/cuser/oid/' + str(id1)
         tmp = {
-            'dishId': dishids[0],
+            'orderItemId': oiid,
             'like': 1,
             'urge': 1
         }
@@ -326,10 +336,20 @@ class FlaskClientTest(unittest.TestCase):
                         data=json.dumps({'payId':123}))
         self.assertTrue(200==response.status_code)
 
+        url = 'http://localhost:5000/api/orders/buser/oid/' + str(id1)
+        response = self.client.get(url)
+        self.assertTrue(200==response.status_code)
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        ois = data.get('orderItems')
+        self.assertTrue(ois is not None)
+        oiid = ois[0].get('id')
+
         # 测试修改完成和完成时间
         url = 'http://localhost:5000/api/orders/buser/oid/' + str(id1)
         tmp = {
-            'dishId': dishids[0],
+            'orderItemId': oiid,
             'finished': 1,
             'time': '2018-06-23 12:00:00'
         }
