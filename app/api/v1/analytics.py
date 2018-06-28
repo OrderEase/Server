@@ -162,6 +162,8 @@ class CountFinishTime(Resource):
 
             orders = Order.query.all()
             for order in orders:
+                if order.finished == 0:
+                    continue
                 last_dish_finish_time = 0
                 for dish in order.items:
                     dish_finish_time = (dish.time - order.payDate).seconds / 60
