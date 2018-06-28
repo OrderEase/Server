@@ -78,9 +78,14 @@ class Order(db.Model):
         payDate = ''
         if self.payDate is not None:
             payDate = self.payDate.strftime("%Y-%m-%d %H:%M:%S")
+        user = User.query.filter_by(id=self.uid).first()
+        username = ''
+        if user is not None:
+            username = user.username
         return {
             'id': self.id,
             'tableId': self.tableId,
+            'username': username,
             'total': self.total,
             'due': self.due,
             'isPay': self.isPay,
