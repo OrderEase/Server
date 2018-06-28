@@ -3,22 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import UploadSet, configure_uploads
 from flask_cors import CORS
 from app.models import db
+from app.config import config
 from datetime import datetime
 
 restrts_upload_set = UploadSet('restrts')
 dishes_upload_set = UploadSet('dishes')
 
-def create_app(test_config=None):
+def create_app(config_name):
 
     app = Flask(__name__, instance_relative_config=True)
     CORS(app, supports_credentials=True)
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+    app.config.from_object(config[config_name])
 
     configure_uploads(app, (restrts_upload_set, dishes_upload_set))
 

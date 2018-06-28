@@ -183,7 +183,12 @@ class CountFinishTime(Resource):
                 if last_dish_finish_time > max_order_finish_time:
                     max_order_finish_time = last_dish_finish_time
 
-            return {"order": {"avg": round(total_order_time / len(orders), 1), "max": max_order_finish_time}, "dish": {"avg": round(total_dish_finish_time / total_dish_num, 1), "max": max_dish_finish_time}}, 200
+            return {"order":
+                        {"avg": round(total_order_time / len(orders) if len(orders) != 0 else 0, 1),
+                         "max": max_order_finish_time},
+                    "dish":
+                        {"avg": round(total_dish_finish_time / total_dish_num if total_dish_num != 0 else 0, 1),
+                         "max": max_dish_finish_time}}, 200
 
         except Exception as e:
             print(e)
@@ -203,8 +208,12 @@ class CountSummary(Resource):
                 end = datetime.strptime(request.args.get('end'), "%Y-%m-%d")
             else:
                 tmp_orders = Order.query.order_by(Order.payDate).all()
-                start = tmp_orders[0].payDate.date()
-                end = tmp_orders[len(tmp_orders) - 1].payDate.date()
+                if len(tmp_orders) == 0:
+                    start = datetime.today().date()
+                    end = start + timedelta(days=7)
+                else:
+                    start = tmp_orders[0].payDate.date()
+                    end = tmp_orders[len(tmp_orders) - 1].payDate.date()
                 # print(start)
                 # print(end)
 
