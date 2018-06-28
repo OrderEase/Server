@@ -15,6 +15,7 @@ To connect to your own DB, you should create your own `instance/config.py` at ro
 SQLALCHEMY_DATABASE_URI="mysql://username:password@localhost:3306/test?charset=utf8"
 SQLALCHEMY_TRACK_MODIFICATIONS=True
 SECRET_KEY = 'Sdna2MshdG39DOA2skajd'
+GEN_FAKE_DATA = True
 ```
 
 Create the virtual environmet:
@@ -35,20 +36,20 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
+You should create basic data first:
+
+```python
+python manage.py gen_data
+```
+
 Start the server:
 
 ```shell
 python manage.py runserver
 ```
 
-Run all the unit tests:
+Run all the unit tests: (not finished)
 
 ```python
 python manage.py test
 ```
-
-## How to add some dishes and menu when testing 2C without minding 2B
-run `temp/add.py`
-
-
-After that, four dishes would be added into the database, and a menu would be created and associated with the restaurant.

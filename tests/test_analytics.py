@@ -7,14 +7,9 @@ class FlaskClientTest(unittest.TestCase):
         self.app = create_app()
         self.app_context = self.app.app_context()
         self.app_context.push()
-        db.create_all()
         self.client = self.app.test_client()
-        # response = self.client.get('http://localhost:5000/api/orders/test/')
-        # print(response.get_data(as_text=True))
 
     def tearDown(self):
-        db.session.remove()
-        # db.drop_all()
         self.app_context.pop()
 
     def test_turnover(self):

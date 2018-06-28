@@ -10,40 +10,40 @@ from .utils import getImageFromBase64
 
 api = Namespace('busers')
 
-@api.route('/')
-class BUserRegister(Resource):
+# @api.route('/')
+# class BUserRegister(Resource):
 
-    def post(self):
-        """新建商家用户
-        """
-        try:
-            form = request.get_json(force=True)
+#     def post(self):
+#         """新建商家用户
+#         """
+#         try:
+#             form = request.get_json(force=True)
 
-            username = form.get('username')
-            if username is None:
-                return {'message': 'Username is required.'}, 400
+#             username = form.get('username')
+#             if username is None:
+#                 return {'message': 'Username is required.'}, 400
 
-            password = form.get('password')
-            if username is None:
-                return {'message': 'Password is required.'}, 400
+#             password = form.get('password')
+#             if username is None:
+#                 return {'message': 'Password is required.'}, 400
 
-            authority = form.get('authority')
-            if authority != "manager" and authority != "cook":
-                return {'message': 'Invalid authority. Required "manager" or "cook"'}, 400
+#             authority = form.get('authority')
+#             if authority != "manager" and authority != "cook":
+#                 return {'message': 'Invalid authority. Required "manager" or "cook"'}, 400
 
-            buser = User.query.filter_by(username=username).first()
-            if buser is not None:
-                return {'message': 'Username exists.'}, 400
+#             buser = User.query.filter_by(username=username).first()
+#             if buser is not None:
+#                 return {'message': 'Username exists.'}, 400
 
-            new_buser = User(username=username, password=password, authority=authority)
-            db.session.add(new_buser)
-            db.session.commit()
+#             new_buser = User(username=username, password=password, authority=authority)
+#             db.session.add(new_buser)
+#             db.session.commit()
 
-            return {"message": "Successfully register."}, 200
+#             return {"message": "Successfully register."}, 200
 
-        except Exception as e:
-            print(e)
-            return {'message': 'Internal Server Error'}, 500
+#         except Exception as e:
+#             print(e)
+#             return {'message': 'Internal Server Error'}, 500
 
 @api.route('/password')
 class BUserModifyPassword(Resource):

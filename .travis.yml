@@ -20,7 +20,7 @@ install:
 
 before_script:
   # - mysql -e "USE mysql;\nUPDATE user SET password=PASSWORD('password') WHERE user='root';\nFLUSH PRIVILEGES;\n"
-  # - python manage.py runserver
+  - python manage.py gen_data
 
 script:
   - coverage run --source=app manage.py test

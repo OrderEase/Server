@@ -111,7 +111,7 @@ class CountOrders(Resource):
     # @login_required(authority="manager")
     def get(self):
         try:
-            weekday = ['周一', '周二', '周三', '周四', '周五', '周六', '周七']
+            weekday = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
             count = [0 for x in range(7)]
             orders = Order.query.all()
 

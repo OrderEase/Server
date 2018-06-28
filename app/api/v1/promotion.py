@@ -1,6 +1,7 @@
 from flask import request
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
+from flask_login import current_user
 from app.models import Rule, Promotion, db
 from app.login import login_required
 
