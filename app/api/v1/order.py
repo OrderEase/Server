@@ -335,10 +335,10 @@ class Orders(Resource):
         try:
             finished = request.args.get('finished')
             if finished is None:
-                orders = Order.query.all()
+                orders = Order.query.order_by(Order.payDate)
             else:
                 finished = int(finished)
-                orders = Order.query.filter_by(finished=finished).all()
+                orders = Order.query.filter_by(finished=finished).order_by(Order.payDate)
             
 
             ret = []
