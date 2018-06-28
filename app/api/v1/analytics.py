@@ -133,7 +133,7 @@ class CountPayWay(Resource):
     def get(self):
         try:
             payway_dict = {}
-            orders = Order.query.filter().all()
+            orders = Order.query.all()
             for order in orders:
                 if order.payWay not in payway_dict.keys():
                     payway_dict[order.payWay] = 0
@@ -160,7 +160,7 @@ class CountFinishTime(Resource):
             total_dish_finish_time = 0
             total_dish_num = 0
 
-            orders = Order.query.all()
+            orders = Order.query.filter(Order.finished == 1).all()
             for order in orders:
                 last_dish_finish_time = 0
                 for dish in order.items:

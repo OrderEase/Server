@@ -10,7 +10,7 @@ def gen_basic_data():
     try:
         # db.drop_all()
         db.create_all()
-        user = User.query.first()
+        user = User.query.filter_by(id=1).first()
         if user is not None:
             print("Basic data exists.")
             return

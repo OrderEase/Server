@@ -28,13 +28,11 @@ class CreateRules(Resource):
             if discount is None or discount < 0:
                 return {'message': 'Discount is required and not negative.'}, 400
 
-            promotion_id = pid
-
             rule = Rule()
             rule.mode = mode
             rule.requirement = requirement
             rule.discount = discount
-            rule.promotion_id = promotion_id
+            rule.promotion_id = pid
 
             db.session.add(rule)
             db.session.commit()
