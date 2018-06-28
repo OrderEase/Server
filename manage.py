@@ -5,6 +5,7 @@ from flask_script import Manager, Shell, Server
 import app.gen_data as data_generator
 
 app = create_app('Development')
+# app = create_app('Test')
 manager = Manager(app)
 
 

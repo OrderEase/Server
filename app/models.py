@@ -11,7 +11,7 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), doc='用户名', unique=True)
-    password = db.Column(db.String(32), doc='密码', nullable=True)
+    password = db.Column(db.String(100), doc='密码', nullable=True)
     authority = db.Column(db.String(32), doc='权限, [customer, manager, cook]', nullable=False)
     register_date = db.Column(db.DateTime, nullable=True)
 
