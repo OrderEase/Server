@@ -174,60 +174,98 @@ class Orders(Resource):
                 return {'message': 'Order not paid'}, 400
 
             form = request.get_json(force=True)
-            dishId = form.get('dishId')
-            if dishId is None:
-                return {'message': 'Dish id is required'}, 400
+            orderItemId = form.get('orderItemId')
+            if orderItemId is None:
+                return {'message': 'orderItemId is required'}, 400
             try:
-                dishId = int(dishId)
+                orderItemId = int(orderItemId)
             except Exception as e:
                 print(e)
                 return {'message': 'Wrong dish id'}, 400
 
-            items = order.items
-            found = False
-            for item in items:
-                if item.dishId == dishId:
-                    dish = Dish.query.filter_by(id=dishId).first()
-                    found = True
-                    like = form.get('like')
-                    if like is not None:
-                        try:
-                            like = int(like)
-                        except Exception as e:
-                            print(e)
-                            return {
-                                'message': 'Like should be 0 or 1, 1 means like'
-                                }, 400
-                        if like != 0 and like != 1:
-                            return {
-                                'message': 'Like should be 0 or 1, 1 means like'
-                                }, 400
-                        if item.like == 0 and like == 1:
-                            dish.likes += 1
-                        item.like = like
-
-                    urge = form.get('urge')
-                    if urge is not None:
-                        try:
-                            urge = int(urge)
-                        except Exception as e:
-                            print(e)
-                            return {
-                                'message': 'Urge should be 0 or 1, 1 means urge'
-                                }, 400
-                        if urge != 0 and urge != 1:
-                            return {
-                                'message': 'Urge should be 0 or 1, 1 means urge'
-                                }, 400
-                        item.urge = urge
-
-                    db.session.commit()
-                    break
-
-            if found is False:
+            item = OrderItem.query.filter_by(id=orderItemId).first()
+            if item is None:
                 return {'message': 'Dish not found'}, 404
-            else:
-                return {'message': 'Successfully modify.'}, 200
+            dish = Dish.query.filter_by(id=item.dishId).first()
+            like = form.get('like')
+            if like is not None:
+                try:
+                    like = int(like)
+                except Exception as e:
+                    print(e)
+                    return {
+                        'message': 'Like should be 0 or 1, 1 means like'
+                        }, 400
+                if like != 0 and like != 1:
+                    return {
+                        'message': 'Like should be 0 or 1, 1 means like'
+                        }, 400
+                if item.like == 0 and like == 1:
+                    dish.likes += 1
+                item.like = like
+            
+            urge = form.get('urge')
+            if urge is not None:
+                try:
+                    urge = int(urge)
+                except Exception as e:
+                    print(e)
+                    return {
+                        'message': 'Urge should be 0 or 1, 1 means urge'
+                        }, 400
+                if urge != 0 and urge != 1:
+                    return {
+                        'message': 'Urge should be 0 or 1, 1 means urge'
+                        }, 400
+                item.urge = urge
+
+            db.session.commit()
+
+            # found = False
+
+            # for item in items:
+            #     if item.orderItemId == dishId:
+            #         dish = Dish.query.filter_by(id=dishId).first()
+            #         found = True
+            #         like = form.get('like')
+            #         if like is not None:
+            #             try:
+            #                 like = int(like)
+            #             except Exception as e:
+            #                 print(e)
+            #                 return {
+            #                     'message': 'Like should be 0 or 1, 1 means like'
+            #                     }, 400
+            #             if like != 0 and like != 1:
+            #                 return {
+            #                     'message': 'Like should be 0 or 1, 1 means like'
+            #                     }, 400
+            #             if item.like == 0 and like == 1:
+            #                 dish.likes += 1
+            #             item.like = like
+
+            #         urge = form.get('urge')
+            #         if urge is not None:
+            #             try:
+            #                 urge = int(urge)
+            #             except Exception as e:
+            #                 print(e)
+            #                 return {
+            #                     'message': 'Urge should be 0 or 1, 1 means urge'
+            #                     }, 400
+            #             if urge != 0 and urge != 1:
+            #                 return {
+            #                     'message': 'Urge should be 0 or 1, 1 means urge'
+            #                     }, 400
+            #             item.urge = urge
+
+            #         db.session.commit()
+            #         break
+
+            # if found is False:
+            #     return {'message': 'Dish not found'}, 404
+            # else:
+            return {'message': 'Successfully modify.'}, 200
 
         except Exception as e:
             print(e)
@@ -241,70 +279,110 @@ class Orders(Resource):
     @login_required(authority='cook')
     def put(self, oid):
 
-        order = Order.query.filter_by(id=oid).first()
-
         try:
+            order = Order.query.filter_by(id=oid).first()
             if order is None:
                 return {'message': 'Order not found'}, 404
             if order.isPay == 0:
                 return {'message': 'Order not paid'}, 400
 
             form = request.get_json(force=True)
-            dishId = form.get('dishId')
-            if dishId is None:
-                return {'message': 'Dish id is required'}, 400
+            
+            orderItemId = form.get('orderItemId')
+            if orderItemId is None:
+                return {'message': 'orderItemId is required'}, 400
             try:
-                dishId = int(dishId)
+                orderItemId = int(orderItemId)
             except Exception as e:
                 print(e)
                 return {'message': 'Wrong dish id'}, 400
 
-            items = order.items
-            found = False
-            for item in items:
-                if item.dishId == dishId:
-                    found = True
-                    finished = form.get('finished')
-                    if finished is not None:
-                        try:
-                            finished = int(finished)
-                        except Exception as e:
-                            print(e)
-                            return {
-                                'message': 'Finished should be 0 or 1, 1 means finished'
-                                }, 400
-                        if finished != 0 and finished != 1:
-                            return {
-                                'message': 'Finished should be 0 or 1, 1 means finished'
-                                }, 400
-                        item.finished = finished
-
-                    time = form.get('time')
-                    if time is not None:
-                        try:
-                            time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
-                        except Exception as e:
-                            print(e)
-                            return {
-                                'message': 'Wrong date-time format'
-                                }, 400
-                        item.time = time
-
-                    db.session.commit()
-                    break
+            item = OrderItem.query.filter_by(id=orderItemId).first()
+            if item is None:
+                return {'message': 'Dish not found'}, 404
+            dish = Dish.query.filter_by(id=item.dishId).first()
+            finished = form.get('finished')
+            if finished is not None:
+                try:
+                    finished = int(finished)
+                except Exception as e:
+                    print(e)
+                    return {
+                        'message': 'finished should be 0 or 1, 1 means finished'
+                        }, 400
+                if finished != 0 and finished != 1:
+                    return {
+                        'message': 'finished should be 0 or 1, 1 means finished'
+                        }, 400
+                item.finished = finished
+            
+            time = form.get('time')
+            if time is not None:
+                try:
+                    time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+                except Exception as e:
+                    print(e)
+                    return {
+                        'message': 'Wrong date-time format'
+                        }, 400
+                item.time = time
 
             finished = 1
+            items = order.items
             for item in items:
                 if item.finished == 0:
                     finished = 0
                     break
             order.finished = finished
+
             db.session.commit()
 
-            if found is False:
-                return {'message': 'Dish not found'}, 404
-            else:
-                return {'message': 'Successfully modify.'}, 200
+            # items = order.items
+            # found = False
+            # for item in items:
+            #     if item.dishId == dishId:
+            #         found = True
+            #         finished = form.get('finished')
+            #         if finished is not None:
+            #             try:
+            #                 finished = int(finished)
+            #             except Exception as e:
+            #                 print(e)
+            #                 return {
+            #                     'message': 'Finished should be 0 or 1, 1 means finished'
+            #                     }, 400
+            #             if finished != 0 and finished != 1:
+            #                 return {
+            #                     'message': 'Finished should be 0 or 1, 1 means finished'
+            #                     }, 400
+            #             item.finished = finished
+
+            #         time = form.get('time')
+            #         if time is not None:
+            #             try:
+            #                 time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+            #             except Exception as e:
+            #                 print(e)
+            #                 return {
+            #                     'message': 'Wrong date-time format'
+            #                     }, 400
+            #             item.time = time
+
+            #         db.session.commit()
+            #         break
+
+            # finished = 1
+            # for item in items:
+            #     if item.finished == 0:
+            #         finished = 0
+            #         break
+            # order.finished = finished
+            # db.session.commit()
+
+            # if found is False:
+            #     return {'message': 'Dish not found'}, 404
+            # else:
+            return {'message': 'Successfully modify.'}, 200
 
         except Exception as e:
             print(e)
