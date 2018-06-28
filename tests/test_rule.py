@@ -48,6 +48,7 @@ class FlaskClientTest(unittest.TestCase):
             self.assertTrue(200 == response.status_code)
 
             response = self.client.put('http://localhost:5000/api/busers/session')
+            self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def tearDown(self):
         db.session.remove()
@@ -99,6 +100,9 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.delete('http://localhost:5000/api/promotions/1/rules/2')
         self.assertTrue('rule not found' in response.get_data(as_text=True))
 
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
+
     def test_getRule(self):
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
@@ -122,6 +126,9 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.get('http://localhost:5000/api/promotions/1/rules/2')
         # print(response.get_data(as_text=True))
         self.assertTrue('rule not found' in response.get_data(as_text=True))
+
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def test_modifyRule(self):
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
@@ -156,6 +163,9 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.get('http://localhost:5000/api/promotions/1/rules/1')
         # print(response.get_data(as_text=True))
         self.assertTrue('{"id": 1, "mode": 2, "requirement": 666.0, "discount": 6.0}' in response.get_data(as_text=True))
+
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
 
 

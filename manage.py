@@ -7,6 +7,7 @@ import app.gen_data as data_generator
 app = create_app('Test')
 manager = Manager(app)
 
+
 @manager.command
 def test(coverage=False):
     """Run the unit tests."""
@@ -18,6 +19,7 @@ def test(coverage=False):
 
     data_generator.remove_data()
 
+
 @manager.command
 def gen_data(coverage=False):
     """Generate fake data."""
@@ -27,14 +29,17 @@ def gen_data(coverage=False):
         data_generator.gen_fake_data()
         data_generator.gen_unfinished_orders()
 
+
 @manager.command
 def del_data(coverage=False):
     """Generate fake data."""
     data_generator.remove_data()
 
+
 @manager.command
 def runserver(coverage=False):
     app.run(host='0.0.0.0', port=5000)
+
 
 if __name__ == '__main__':
     manager.run()

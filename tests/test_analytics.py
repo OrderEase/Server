@@ -4,7 +4,6 @@ from app import create_app, db
 
 class FlaskClientTest(unittest.TestCase):
 
-    login = False
     def setUp(self):
         self.app = create_app('Test')
         self.app_context = self.app.app_context()
@@ -12,16 +11,17 @@ class FlaskClientTest(unittest.TestCase):
         db.create_all()
         self.client = self.app.test_client()
 
-        if not self.login:
-            response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
-                "username": "manager",
-                "password": "123"
-            }))
-            self.assertTrue("Successfully login." in response.get_data(as_text=True))
+        response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
+            "username": "manager",
+            "password": "123"
+        }))
+        self.assertTrue("Successfully login." in response.get_data(as_text=True))
 
-            self.login = True
 
     def tearDown(self):
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
+
         db.session.remove()
         self.app_context.pop()
 
