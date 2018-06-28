@@ -85,6 +85,8 @@ class FlaskClientTest(unittest.TestCase):
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def test_add_delete_Promotion(self):
+        pid = 0
+
         response = self.client.post('http://localhost:5000/api/promotions/', data=json.dumps({
             "theme": "端午节活动",
             "begin": "2017-11-23 16:10",
@@ -107,14 +109,17 @@ class FlaskClientTest(unittest.TestCase):
             "end": "2017-11-23 16:10",
             "isend": 1
         }))
-        # print(response.get_data(as_text=True))
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        pid = data.get('id')
         self.assertTrue(response.status_code == 200)
 
-        response = self.client.delete('http://localhost:5000/api/promotions/3')
+        response = self.client.delete('http://localhost:5000/api/promotions/%d' % pid)
         # print(response.get_data(as_text=True))
         self.assertTrue('delete promotion successfully.' in response.get_data(as_text=True))
 
-        response = self.client.get('http://localhost:5000/api/promotions/3')
+        response = self.client.get('http://localhost:5000/api/promotions/%d' % pid)
         # print(response.get_data(as_text=True))
         self.assertTrue('promotion not found.' in response.get_data(as_text=True))
 
@@ -122,6 +127,8 @@ class FlaskClientTest(unittest.TestCase):
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def test_modifyPromotions(self):
+        pid = 0
+
         response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
             "username": "manager",
             "password": "123",
@@ -135,8 +142,12 @@ class FlaskClientTest(unittest.TestCase):
             "isend": 1
         }))
         self.assertTrue(response.status_code == 200)
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        pid = data.get('id')
 
-        response = self.client.put('http://localhost:5000/api/promotions/1', data=json.dumps({
+        response = self.client.put('http://localhost:5000/api/promotions/%d' % pid, data=json.dumps({
             "theme": "hhh",
             "begin": "2017-01-01 16:10",
             "end": "2017-01-02 16:10",
@@ -145,7 +156,7 @@ class FlaskClientTest(unittest.TestCase):
         # print(response.get_data(as_text=True))
         self.assertTrue('modify promotion successfully' in response.get_data(as_text=True))
 
-        response = self.client.get('http://localhost:5000/api/promotions/1')
+        response = self.client.get('http://localhost:5000/api/promotions/%d' % pid)
         # print(response.get_data(as_text=True))
         self.assertTrue('hhh' in response.get_data(as_text=True))
 

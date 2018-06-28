@@ -55,6 +55,8 @@ class FlaskClientTest(unittest.TestCase):
         self.app_context.pop()
 
     def test_add_delete_Rule(self):
+        rid = 0
+
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
             'requirement': 100,
@@ -83,27 +85,28 @@ class FlaskClientTest(unittest.TestCase):
         self.assertTrue('Requirement is required and not negative.' in response.get_data(as_text=True))
 
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
-            'mode': 2,
-            'requirement': 100,
-            'discount': -10
-        }))
-        response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
             'requirement': 100,
             'discount': 10
         }))
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        rid = data.get('id')
         self.assertTrue(200 == response.status_code)
 
-        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/2')
+        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/%d' % rid)
         self.assertTrue(200 == response.status_code)
 
-        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/2')
+        response = self.client.delete('http://localhost:5000/api/promotions/1/rules/%d' % rid)
         self.assertTrue('rule not found' in response.get_data(as_text=True))
 
         response = self.client.put('http://localhost:5000/api/busers/session')
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def test_getRule(self):
+        rid = 0
+
         response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
             'mode': 1,
             'requirement': 100,
@@ -119,11 +122,22 @@ class FlaskClientTest(unittest.TestCase):
         }))
         self.assertTrue("Successfully login." in response.get_data(as_text=True))
 
-        response = self.client.get('http://localhost:5000/api/promotions/1/rules/1')
-        # print(response.get_data(as_text=True))
-        self.assertTrue('{"id": 1, "mode": 1, "requirement": 100.0, "discount": 10.0}' in response.get_data(as_text=True))
+        response = self.client.post('http://localhost:5000/api/promotions/1/rules', data=json.dumps({
+            'mode': 1,
+            'requirement': 100,
+            'discount': 10
+        }))
+        data = response.get_data()
+        data.decode('utf-8')
+        data = json.loads(data)
+        rid = data.get('id')
+        self.assertTrue(200 == response.status_code)
 
-        response = self.client.get('http://localhost:5000/api/promotions/1/rules/2')
+        response = self.client.get('http://localhost:5000/api/promotions/1/rules/%d' % rid)
+        # print(response.get_data(as_text=True))
+        self.assertTrue(200 == response.status_code)
+
+        response = self.client.get('http://localhost:5000/api/promotions/1/rules/%d' % (rid + 1))
         # print(response.get_data(as_text=True))
         self.assertTrue('rule not found' in response.get_data(as_text=True))
 

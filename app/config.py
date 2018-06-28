@@ -13,12 +13,10 @@ class Config(object):
     UPLOADED_RESTRTS_DEST = os.path.join(rootdir, 'static/images/restrts')
 
 class ProductionConfig(Config):
-    GEN_FAKE_DATA = False
     SQLALCHEMY_DATABASE_URI = os.environ["PRODUCTION_DATABASE_URI"]
     SECRET_KEY = os.environ["SECRET_KEY"]
 
 class DevelopmentConfig(Config):
-    GEN_FAKE_DATA = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ["DEVELOPMENT_DATABASE_URI"]
     SECRET_KEY = os.environ["SECRET_KEY"]
@@ -26,7 +24,6 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URI"]
     SECRET_KEY = "Sdna2MshdG39DOA2skajd"
-    GEN_FAKE_DATA = True
     TESTING = True
 
 config = {

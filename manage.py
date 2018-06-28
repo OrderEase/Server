@@ -17,17 +17,15 @@ def test(coverage=False):
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
 
-    data_generator.remove_data()
+    # data_generator.remove_data()
 
 
 @manager.command
 def gen_data(coverage=False):
     """Generate fake data."""
     data_generator.gen_basic_data()
-
-    if app.config['GEN_FAKE_DATA']:
-        data_generator.gen_fake_data()
-        data_generator.gen_unfinished_orders()
+    data_generator.gen_fake_data()
+    data_generator.gen_unfinished_orders()
 
 
 @manager.command
