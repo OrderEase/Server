@@ -199,8 +199,6 @@ class CountSummary(Resource):
                 else:
                     start = tmp_orders[0].payDate.date()
                     end = tmp_orders[len(tmp_orders) - 1].payDate.date()
-                # print(start)
-                # print(end)
 
             summary_list = []
 

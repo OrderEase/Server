@@ -67,6 +67,9 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.get('http://localhost:5000/api/promotions/')
         self.assertTrue(response.status_code == 200)
 
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
+
     def test_getSinglePromotion(self):
         response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
             "username": "manager",
@@ -77,6 +80,9 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.get('http://localhost:5000/api/promotions/1')
         # print(response.get_data(as_text=True))
         self.assertTrue(response.status_code == 200)
+
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
 
     def test_add_delete_Promotion(self):
         response = self.client.post('http://localhost:5000/api/promotions/', data=json.dumps({
@@ -112,6 +118,9 @@ class FlaskClientTest(unittest.TestCase):
         # print(response.get_data(as_text=True))
         self.assertTrue('promotion not found.' in response.get_data(as_text=True))
 
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
+
     def test_modifyPromotions(self):
         response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
             "username": "manager",
@@ -139,3 +148,6 @@ class FlaskClientTest(unittest.TestCase):
         response = self.client.get('http://localhost:5000/api/promotions/1')
         # print(response.get_data(as_text=True))
         self.assertTrue('hhh' in response.get_data(as_text=True))
+
+        response = self.client.put('http://localhost:5000/api/busers/session')
+        self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
