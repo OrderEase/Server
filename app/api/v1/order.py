@@ -203,7 +203,7 @@ class Orders(Resource):
                                 'message': 'Like should be 0 or 1, 1 means like'
                                 }, 400
                         if item.like == 0 and like == 1:
-                            dish.like += 1
+                            dish.likes += 1
                         item.like = like
 
                     urge = form.get('urge')
@@ -335,10 +335,10 @@ class Orders(Resource):
         try:
             finished = request.args.get('finished')
             if finished is None:
-                orders = Order.query.all()
+                orders = Order.query.order_by(Order.payDate)
             else:
                 finished = int(finished)
-                orders = Order.query.filter_by(finished=finished).all()
+                orders = Order.query.filter_by(finished=finished).order_by(Order.payDate)
             
 
             ret = []

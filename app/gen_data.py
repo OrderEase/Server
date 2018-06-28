@@ -45,6 +45,33 @@ def gen_basic_data():
         db.session.add(restrt)
         db.session.commit()
 
+        fake = Restaurant()
+        fake.id = -1
+        fake.name = "fake"
+        fake.open = today + timedelta(days=-30)
+        fake.close = today + timedelta(days=30)
+        fake.description = "fake"
+        db.session.add(fake)
+        db.session.commit()
+
+        fake = Menu()
+        fake.id = -1
+        fake.name = "fake"
+        fake.used = 0
+        fake.delete = True
+        fake.restId = -1
+        db.session.add(fake)
+        db.session.commit()
+
+        fake = Category()
+        fake.id = -1
+        fake.name = "fake"
+        fake.rank = 0
+        fake.delete = True
+        fake.menuId = -1
+        db.session.add(fake)
+        db.session.commit()
+
     except Exception as e:
         print(e)
         print('Internal Server Error')
