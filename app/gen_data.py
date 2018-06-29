@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import random
 
 def remove_data():
+    db.session.remove()
     db.drop_all()
 
 def gen_basic_data():
