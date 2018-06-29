@@ -229,6 +229,7 @@ def gen_fake_data():
             user.username = 'username' + str(i)
             user.authority = 'customer'
             user.register_date = today + timedelta(days=int((random.random() - 1) * 30))
+            # print(user.register_date)
             db.session.add(user)
             db.session.commit()
 

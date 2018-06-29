@@ -161,10 +161,10 @@ class CountFinishTime(Resource):
 
             return {"order":
                         {"avg": round(total_order_time / len(orders) if len(orders) != 0 else 0, 1),
-                         "max": max_order_finish_time},
+                         "max": round(max_order_finish_time, 1)},
                     "dish":
                         {"avg": round(total_dish_finish_time / total_dish_num if total_dish_num != 0 else 0, 1),
-                         "max": max_dish_finish_time}}, 200
+                         "max": round(max_dish_finish_time, 1)}}, 200
 
         except Exception as e:
             print(e)

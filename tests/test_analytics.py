@@ -41,7 +41,7 @@ class FlaskClientTest(unittest.TestCase):
     def test_countCard(self):
         response = self.client.get('http://localhost:5000/api/analytics/count/card')
         self.assertTrue(response.status_code == 200)
-        # print(response.get_data(as_text=True))
+        print(response.get_data(as_text=True))
 
     def test_payway(self):
         response = self.client.get('http://localhost:5000/api/analytics/count/payway')
