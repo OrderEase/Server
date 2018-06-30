@@ -378,19 +378,6 @@ class Dishes(Resource):
             print(e)
             return {'message': 'Internal Server Error'}, 500
 
-# @api.route('/<int:menuid>/categories/<int:catid>/dishes/<int:dishid>/avatar')
-# class Dishesr(Resource):
-
-#     @login_required(authority="customer")
-#     def get(self):
-#         try:
-#             buser = User.query.filter_by(id=current_user.id).first()
-#             return {"path": 'static/images/users/' + buser.avatar}, 200
-
-#         except Exception as e:
-#             print(e)
-#             return {'message': 'Internal Server Error'}, 500
-
 @api.route('/<int:menuid>/categories/<int:catid>/dishes/<int:dishid>')
 class Dishes(Resource):
 
