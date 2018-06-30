@@ -219,7 +219,7 @@ class Orders(Resource):
                     return {
                         'message': 'Like should be 0 or 1, 1 means like'
                         }, 400
-                if item.like == 1 and like == 1；
+                if item.like == 1 and like == 1:
                     return {
                         'message': 'Already like'
                     }, 400
