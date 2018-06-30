@@ -4,7 +4,7 @@ from app import create_app, db
 from flask_script import Manager, Shell, Server
 import app.gen_data as data_generator
 
-app = create_app('Development')
+app = create_app(os.environ.get('MODE', 'DEVELOPMENT'))
 manager = Manager(app)
 
 
