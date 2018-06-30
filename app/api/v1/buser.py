@@ -4,6 +4,7 @@ from flask_restplus import Namespace, Resource
 from app.models import User, Restaurant, db
 from flask_login import login_user, logout_user, current_user
 from app.login import login_required
+from werkzeug.security import generate_password_hash, check_password_hash
 from PIL import Image
 import hashlib
 from .utils import getImageFromBase64
@@ -28,10 +29,10 @@ class BUserModifyPassword(Resource):
 
             buser = User.query.get(current_user.id)
             # print(current_user.username)
-            if old_password != buser.password:
+            if not check_password_hash(buser.password, old_password):
                 return {'message': 'Old password wrong.'}, 401
 
-            buser.password = new_password
+            buser.password = generate_password_hash(new_password)
             db.session.commit()
 
             return {"message": "Change password successfully."}, 200
@@ -57,7 +58,7 @@ class BUserLog(Resource):
                 return {'message': 'Password is required.'}, 400
 
             buser = User.query.filter_by(username=username).first()
-            if buser is None or buser.password != password:
+            if buser is None or not check_password_hash(buser.password, password):
                 return {"message": "Invalid username or password."}, 401
 
             login_user(buser)

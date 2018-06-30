@@ -98,7 +98,7 @@ class ModifyRules(Resource):
             if requirement is None or requirement < 0:
                 return {'message': 'Requirement is required and not negative.'}, 400
 
-            discount = int(form.get('discount'))
+            discount = float(form.get('discount'))
             if discount is None or discount < 0:
                 return {'message': 'Discount is required and not negative.'}, 400
 

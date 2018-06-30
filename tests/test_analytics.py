@@ -1,19 +1,14 @@
 import unittest
 import json
-from app import create_app, db
+from flask import current_app
+from app import db
 import app.gen_data as data_generator
 
 class FlaskClientTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = create_app('Test')
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        db.create_all()
-        self.client = self.app.test_client()
 
-        data_generator.gen_basic_data()
-
+        self.client = current_app.test_client()
         response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
             "username": "manager",
             "password": "123"
@@ -24,10 +19,6 @@ class FlaskClientTest(unittest.TestCase):
     def tearDown(self):
         response = self.client.put('http://localhost:5000/api/busers/session')
         self.assertTrue('Successfully logout.' in response.get_data(as_text=True))
-
-        data_generator.remove_data()
-        db.session.remove()
-        self.app_context.pop()
 
     def test_turnover(self):
         response = self.client.get('http://localhost:5000/api/analytics/turnover?days=7')

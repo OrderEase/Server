@@ -1,9 +1,11 @@
 from .models import User, Order, Dish, OrderItem, Menu, Category, Restaurant, db
 from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import random
 
 def remove_data():
+    db.session.remove()
     db.drop_all()
 
 def gen_basic_data():
@@ -22,7 +24,7 @@ def gen_basic_data():
         buser_manager = User()
         buser_manager.id = 1
         buser_manager.username = "manager"
-        buser_manager.password = "123"
+        buser_manager.password = generate_password_hash("123")
         buser_manager.authority = "manager"
         buser_manager.register_date = today + timedelta(days=-7)
         db.session.add(buser_manager)
@@ -30,7 +32,7 @@ def gen_basic_data():
         buser_cook = User()
         buser_cook.id = 2
         buser_cook.username = "cook"
-        buser_cook.password = "123"
+        buser_cook.password = generate_password_hash("123")
         buser_cook.authority = "cook"
         buser_cook.register_date = today + timedelta(days=-7)
         db.session.add(buser_cook)
@@ -228,6 +230,7 @@ def gen_fake_data():
             user.username = 'username' + str(i)
             user.authority = 'customer'
             user.register_date = today + timedelta(days=int((random.random() - 1) * 30))
+            # print(user.register_date)
             db.session.add(user)
             db.session.commit()
 

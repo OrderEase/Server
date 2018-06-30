@@ -19,8 +19,7 @@ class Orders(Resource):
 
         try:
             form = request.get_json(force=True)
-            # form = request.form
-            # print(form)
+
             tableId = form.get('tableId')
             if tableId is None:
                 return {'message': 'Table\'s id is required'}, 400
@@ -227,7 +226,7 @@ class Orders(Resource):
                 if item.like == 0 and like == 1:
                     dish.likes += 1
                 item.like = like
-            
+
             urge = form.get('urge')
             if urge is not None:
                 try:
@@ -253,50 +252,6 @@ class Orders(Resource):
 
             db.session.commit()
 
-            # found = False
-
-            # for item in items:
-            #     if item.orderItemId == dishId:
-            #         dish = Dish.query.filter_by(id=dishId).first()
-            #         found = True
-            #         like = form.get('like')
-            #         if like is not None:
-            #             try:
-            #                 like = int(like)
-            #             except Exception as e:
-            #                 print(e)
-            #                 return {
-            #                     'message': 'Like should be 0 or 1, 1 means like'
-            #                     }, 400
-            #             if like != 0 and like != 1:
-            #                 return {
-            #                     'message': 'Like should be 0 or 1, 1 means like'
-            #                     }, 400
-            #             if item.like == 0 and like == 1:
-            #                 dish.likes += 1
-            #             item.like = like
-
-            #         urge = form.get('urge')
-            #         if urge is not None:
-            #             try:
-            #                 urge = int(urge)
-            #             except Exception as e:
-            #                 print(e)
-            #                 return {
-            #                     'message': 'Urge should be 0 or 1, 1 means urge'
-            #                     }, 400
-            #             if urge != 0 and urge != 1:
-            #                 return {
-            #                     'message': 'Urge should be 0 or 1, 1 means urge'
-            #                     }, 400
-            #             item.urge = urge
-
-            #         db.session.commit()
-            #         break
-
-            # if found is False:
-            #     return {'message': 'Dish not found'}, 404
-            # else:
             return {'message': 'Successfully modify.'}, 200
 
         except Exception as e:
@@ -319,7 +274,7 @@ class Orders(Resource):
                 return {'message': 'Order not paid'}, 400
 
             form = request.get_json(force=True)
-            
+
             orderItemId = form.get('orderItemId')
             if orderItemId is None:
                 return {'message': 'orderItemId is required'}, 400
@@ -347,7 +302,7 @@ class Orders(Resource):
                         'message': 'finished should be 0 or 1, 1 means finished'
                         }, 400
                 item.finished = finished
-            
+
             time = form.get('time')
             if time is not None:
                 try:
@@ -369,51 +324,6 @@ class Orders(Resource):
 
             db.session.commit()
 
-            # items = order.items
-            # found = False
-            # for item in items:
-            #     if item.dishId == dishId:
-            #         found = True
-            #         finished = form.get('finished')
-            #         if finished is not None:
-            #             try:
-            #                 finished = int(finished)
-            #             except Exception as e:
-            #                 print(e)
-            #                 return {
-            #                     'message': 'Finished should be 0 or 1, 1 means finished'
-            #                     }, 400
-            #             if finished != 0 and finished != 1:
-            #                 return {
-            #                     'message': 'Finished should be 0 or 1, 1 means finished'
-            #                     }, 400
-            #             item.finished = finished
-
-            #         time = form.get('time')
-            #         if time is not None:
-            #             try:
-            #                 time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
-            #             except Exception as e:
-            #                 print(e)
-            #                 return {
-            #                     'message': 'Wrong date-time format'
-            #                     }, 400
-            #             item.time = time
-
-            #         db.session.commit()
-            #         break
-
-            # finished = 1
-            # for item in items:
-            #     if item.finished == 0:
-            #         finished = 0
-            #         break
-            # order.finished = finished
-            # db.session.commit()
-
-            # if found is False:
-            #     return {'message': 'Dish not found'}, 404
-            # else:
             return {'message': 'Successfully modify.'}, 200
 
         except Exception as e:

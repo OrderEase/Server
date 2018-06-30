@@ -2,6 +2,7 @@ import unittest
 from app import create_app, db
 import json
 import app.gen_data as data_generator
+from flask import current_app
 
 class FlaskClientTest(unittest.TestCase):
 
@@ -22,11 +23,7 @@ class FlaskClientTest(unittest.TestCase):
     }]
 
     def setUp(self):
-        self.app = create_app('Test')
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.client = self.app.test_client()
-        data_generator.gen_basic_data()
+        self.client = current_app.test_client()
 
         if not self.gen_data:
             response = self.client.post('http://localhost:5000/api/busers/session', data=json.dumps({
@@ -53,9 +50,7 @@ class FlaskClientTest(unittest.TestCase):
             self.gen_data = True
 
     def tearDown(self):
-        data_generator.remove_data()
-        db.session.remove()
-        self.app_context.pop()
+        pass
 
     def test_getPromotions(self):
         response = self.client.get('http://localhost:5000/api/promotions/')
