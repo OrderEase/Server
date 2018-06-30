@@ -8,6 +8,7 @@ from app.login import login_required
 from flask_login import current_user
 from app.models import *
 import random
+from sqlalchemy import desc
 
 api = Namespace('orders')
 
@@ -116,6 +117,7 @@ class Orders(Resource):
         try:
             orders = []
             tmp = Order.query.filter_by(uid=current_user.id).filter_by(Cdelete=False).order_by(desc(Order.payDate)).all()
+
             for order in tmp:
                 orders.append(order.json())
 
@@ -371,11 +373,10 @@ class Orders(Resource):
         try:
             finished = request.args.get('finished')
             if finished is None:
-                orders = Order.query.filter_by(isPay=0).order_by(Order.payDate)
+                orders = Order.query.filter_by(isPay=1).order_by(Order.payDate)
             else:
                 finished = int(finished)
-                orders = Order.query.filter_by(finished=finished).filter_by(isPay=0).order_by(Order.payDate)
-
+                orders = Order.query.filter_by(finished=finished).filter_by(isPay=1).order_by(Order.payDate)
             ret = []
             for order in orders:
                 ret.append(order.json())

@@ -27,9 +27,9 @@ class TestingConfig(Config):
     TESTING = True
 
 config = {
-    'Production': ProductionConfig,
-    'Development': DevelopmentConfig,
-    'Test': TestingConfig
+    'PRODUCTION': ProductionConfig,
+    'DEVELOPMENT': DevelopmentConfig,
+    'TEST': TestingConfig
 }
 
 
