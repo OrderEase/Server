@@ -100,7 +100,7 @@ class Orders(Resource):
     def get(self):
         try:
             orders =[]
-            tmp = Order.query.filter_by(uid=current_user.id).all()
+            tmp = Order.query.filter_by(uid=current_user.id).filter_by(Cdelete=False).all()
             for order in tmp:
                 orders.append(order.json())
 
@@ -135,7 +135,9 @@ class Orders(Resource):
             order.payDate = datetime.now()
             order.payId = payId
             order.isPay = 1
-            order.payWay = 'WeChat Pay'
+            payWays = ['微信支付', '比特币', '支付宝', '银行卡']
+            payWay = random.randint(0, 3)
+            order.payWay = payWays[payWay]
             db.session.commit()
 
             return {"message": "Successfully pay."}, 200
@@ -149,10 +151,28 @@ class Orders(Resource):
     def get(self, oid):
         try:
             order = Order.query.filter_by(id=oid).first()
-            if order is None:
+            if order is None or order.Cdelete == True:
                 return {'message': 'Order not found'}, 404
             if order.uid != current_user.id:
                 return {'message': 'Wrong order id'}, 400
+
+            return order.json(), 200
+
+        except Exception as e:
+            print(e)
+            return {'message': 'Internal Server Error'}, 500
+    
+    # 用户删除单个订单
+    @login_required(authority='customer')
+    def delete(self, oid):
+        try:
+            order = Order.query.filter_by(id=oid).first()
+            if order is None or order.Cdelete == True:
+                return {'message': 'Order not found'}, 404
+            if order.uid != current_user.id:
+                return {'message': 'Wrong order id'}, 400
+            
+            order.Cdelete = True
 
             return order.json(), 200
 
@@ -166,7 +186,7 @@ class Orders(Resource):
 
         try:
             order = Order.query.filter_by(id=oid).first()
-            if order is None:
+            if order is None or order.Cdelete == True:
                 return {'message': 'Order not found'}, 404
             if order.uid != current_user.id:
                 return {'message': 'Wrong order id'}, 400
@@ -200,6 +220,10 @@ class Orders(Resource):
                     return {
                         'message': 'Like should be 0 or 1, 1 means like'
                         }, 400
+                if item.like == 1 and like == 1；
+                    return {
+                        'message': 'Already like'
+                    }, 400
                 if item.like == 0 and like == 1:
                     dish.likes += 1
                 item.like = like
@@ -217,6 +241,14 @@ class Orders(Resource):
                     return {
                         'message': 'Urge should be 0 or 1, 1 means urge'
                         }, 400
+                if urge == 1 and item.urge == 1:
+                    return {
+                        'message': 'Already urge'
+                    }, 400
+                if item.finished == 1 and urge == 1:
+                    return {
+                        'message': 'Dish is already finished'
+                    }, 400
                 item.urge = urge
 
             db.session.commit()
@@ -395,7 +427,7 @@ class Orders(Resource):
         try:
             order = Order.query.filter_by(id=oid).first()
 
-            if order is None:
+            if order is None or (order.Cdelete == True and order.isPay == 0):
                 return {'message': 'Order not found '}, 404
 
             return order.json(), 200
@@ -413,12 +445,11 @@ class Orders(Resource):
         try:
             finished = request.args.get('finished')
             if finished is None:
-                orders = Order.query.order_by(Order.payDate)
+                orders = Order.query.filter_by(isPay=0).order_by(Order.payDate)
             else:
                 finished = int(finished)
-                orders = Order.query.filter_by(finished=finished).order_by(Order.payDate)
+                orders = Order.query.filter_by(finished=finished).filter_by(isPay=0).order_by(Order.payDate)
             
-
             ret = []
             for order in orders:
                 ret.append(order.json())

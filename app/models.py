@@ -45,6 +45,8 @@ class Order(db.Model):
     payId = db.Column(db.String(32), nullable=True)
     payWay = db.Column(db.String(32), nullable=True)
     payDate = db.Column(db.DateTime, nullable=True)
+    Cdelete = db.Column(db.Boolean, default=False, nullable=False)
+    Bdelete = db.Column(db.Boolean, default=False, nullable=False)
     finished = db.Column(db.Integer, default=0, nullable=False)
 
     dishes = db.relationship('Dish', secondary=orders_dishes, lazy='dynamic',
