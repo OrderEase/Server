@@ -24,11 +24,15 @@ def test(coverage=False):
     app_context.pop()
 
 @manager.command
-def gen_data(coverage=False):
+def gen_fake_data(coverage=False):
     """Generate fake data."""
-    data_generator.gen_basic_data()
     data_generator.gen_fake_data()
     data_generator.gen_unfinished_orders()
+
+@manager.command
+def gen_basic_data(coverage=False):
+    """Generate basic data."""
+    data_generator.gen_basic_data()
 
 
 @manager.command
