@@ -13,16 +13,16 @@ class Config(object):
     UPLOADED_RESTRTS_DEST = os.path.join(rootdir, 'static/images/restrts')
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ["PRODUCTION_DATABASE_URI"]
-    SECRET_KEY = os.environ["SECRET_KEY"]
+    SQLALCHEMY_DATABASE_URI = os.environ.get("PRODUCTION_DATABASE_URI", '')
+    SECRET_KEY = os.environ.get("SECRET_KEY", "Sdna2MshdG39DOA2skajd")
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ["DEVELOPMENT_DATABASE_URI"]
-    SECRET_KEY = os.environ["SECRET_KEY"]
+    SQLALCHEMY_DATABASE_URI = os.environ("DEVELOPMENT_DATABASE_URI", '')
+    SECRET_KEY = os.environ.get("SECRET_KEY", "Sdna2MshdG39DOA2skajd")
 
 class TestingConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ["TEST_DATABASE_URI"]
+    SQLALCHEMY_DATABASE_URI = os.environ.get("TEST_DATABASE_URI", '')
     SECRET_KEY = "Sdna2MshdG39DOA2skajd"
     TESTING = True
 
