@@ -1,7 +1,8 @@
 from flask import request, json
 from datetime import datetime, timedelta
 from flask_restplus import Namespace, Resource
-from app.models import Order, Dish, OrderItem, db
+from sqlalchemy import desc
+from app.models import Promotion, Order, Dish, OrderItem, db
 from time import strptime
 from app.login import login_required
 from flask_login import current_user
@@ -60,7 +61,22 @@ class Orders(Resource):
                 item.like = 0
                 items.append(item)
 
-            due = total
+            promotions = Promotion.query.filter(Promotion.isend == 0).all()
+            best_due = total
+            for promotion in promotions:
+                for rule in promotion.rules:
+                    if total < rule.requirement:
+                        continue
+                    current_due = 0
+                    if rule.mode == 1:
+                        current_due = total - rule.discount
+                    elif rule.mode == 2:
+                        current_dur = total * rule.discount
+
+                    if current_due < best_due:
+                        best_due = current_due
+
+            due = best_due
             t_total = form.get('total')
             if t_total is None:
                 return {'message': 'Total is required'}, 400
@@ -99,8 +115,9 @@ class Orders(Resource):
     @login_required(authority='customer')
     def get(self):
         try:
-            orders =[]
-            tmp = Order.query.filter_by(uid=current_user.id).filter_by(Cdelete=False).order_by(desc(Order.payDate))
+            orders = []
+            tmp = Order.query.filter_by(uid=current_user.id).filter_by(Cdelete=False).order_by(desc(Order.payDate)).all()
+
             for order in tmp:
                 orders.append(order.json())
 
@@ -165,7 +182,7 @@ class Orders(Resource):
         except Exception as e:
             print(e)
             return {'message': 'Internal Server Error'}, 500
-    
+
     # 用户删除单个订单
     @login_required(authority='customer')
     def delete(self, oid):
@@ -175,7 +192,7 @@ class Orders(Resource):
                 return {'message': 'Order not found'}, 404
             if order.uid != current_user.id:
                 return {'message': 'Wrong order id'}, 400
-            
+
             order.Cdelete = True
 
             return order.json(), 200
@@ -364,7 +381,6 @@ class Orders(Resource):
             else:
                 finished = int(finished)
                 orders = Order.query.filter_by(finished=finished).filter_by(isPay=1).order_by(Order.payDate)
-            
             ret = []
             for order in orders:
                 ret.append(order.json())
