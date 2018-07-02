@@ -131,13 +131,17 @@ class Orders(Resource):
 
             if order.isPay:
                 return {'message': 'Order is paid already.'}, 400
+            
+            payWay = form.get('payWay')
+            if payWay is None:
+                return {'message': 'Pay way is required.'}, 400
 
             order.payDate = datetime.now()
             order.payId = payId
             order.isPay = 1
-            payWays = ['微信支付', '比特币', '支付宝', '银行卡']
-            payWay = random.randint(0, 3)
-            order.payWay = payWays[payWay]
+            # payWays = ['微信支付', '比特币', '支付宝', '银行卡']
+            # payWay = random.randint(0, 3)
+            order.payWay = payWay
             db.session.commit()
 
             return {"message": "Successfully pay."}, 200
