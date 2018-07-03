@@ -261,7 +261,7 @@ class Promotion(db.Model):
     theme = db.Column(db.String(32), nullable=False)
     begin = db.Column(db.DateTime, nullable=False)
     end = db.Column(db.DateTime, nullable=False)
-    isend = db.Column(db.Integer, nullable=False)
+    isend = db.Column(db.Integer, nullable=False)  # 0 not finished, 1 finished
 
     rules = db.relationship('Rule', backref='promotion', lazy='dynamic', cascade='all, delete-orphan', passive_deletes=True)
 

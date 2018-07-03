@@ -1,4 +1,4 @@
-from .models import User, Order, Dish, OrderItem, Menu, Category, Restaurant, db
+from .models import User, Order, Dish, OrderItem, Rule, Menu, Category, Restaurant, Promotion, db
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -288,6 +288,50 @@ def gen_fake_data():
                     item.orderId = order.id
                     db.session.add(item)
                     db.session.commit()
+
+        theme = ["暑假特惠", "学生特惠", "端午特惠"]
+        begin = ["2018-06-22 16:10", "2018-04-29 16:10", "2018-03-22 16:10"]
+        end = ["2018-08-31 16:10", "2018-10-31 16:10", "2018-04-04 16:10"]
+        isend = [0, 0, 1]
+        discount = [0.5, 0.6, 0.8]
+        for i in range(3):
+            promotion = Promotion()
+            promotion.id = i + 1
+            promotion.theme = theme[i]
+            promotion.begin = datetime.strptime(begin[i], "%Y-%m-%d %H:%M")
+            promotion.end = datetime.strptime(end[i], "%Y-%m-%d %H:%M")
+            promotion.isend = isend[i]
+            # print(promotion)
+            db.session.add(promotion)
+            db.session.commit()
+
+        # for i in range(3):
+            rule = Rule()
+            rule.mode = 1
+            rule.requirement = 20
+            rule.discount = i + 1
+            rule.promotion_id = i + 1
+            # print(rule)
+            db.session.add(rule)
+            db.session.commit()
+
+            rule = Rule()
+            rule.mode = 1
+            rule.requirement = 30
+            rule.discount = (i + 1) * 3
+            rule.promotion_id = i + 1
+            db.session.add(rule)
+            db.session.commit()
+
+            rule = Rule()
+            rule.mode = 2
+            rule.requirement = 50 + i * 10
+            rule.discount = discount[i]
+            rule.promotion_id = i + 1
+            db.session.add(rule)
+            db.session.commit()
+
+
         print('Create fake data successfully.')
         db.session.remove()
 

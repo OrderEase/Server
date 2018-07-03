@@ -17,6 +17,7 @@ class CuserLog(Resource):
 
 			username = form.get('username')
 			if username is None:
+				print('ee')
 				return {'message': 'Username is required.'}, 400
 
 			cuser = User.query.filter_by(username=username).first()

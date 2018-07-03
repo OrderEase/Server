@@ -15,6 +15,7 @@ class Promotions(Resource):
         try:
             promotions_list = []
             promotions = Promotion.query.all()
+            # print(promotions)
 
             if current_user.authority == "customer":
                 for promotion in promotions:

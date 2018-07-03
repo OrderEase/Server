@@ -29,7 +29,6 @@ class Orders(Resource):
             isPay = 0
 
             total = 0
-            # dishesId = list(map(int, form.get('dishes').strip().split(',')))
             contents = form.get('content')
             dishes = []
             items = []
@@ -71,7 +70,7 @@ class Orders(Resource):
                     if rule.mode == 1:
                         current_due = total - rule.discount
                     elif rule.mode == 2:
-                        current_dur = total * rule.discount
+                        current_due = total * rule.discount
 
                     if current_due < best_due:
                         best_due = current_due
@@ -138,19 +137,23 @@ class Orders(Resource):
             form = request.get_json(force=True)
             payId = form.get('payId')
             if payId is None:
+                print('Wrong pay id')
                 return {'message': 'Wrong pay id'}, 400
 
             order = Order.query.filter_by(id=oid).first()
             if order is None:
+                print('1')
                 return {'message': 'Order not found.'}, 404
             if order.uid != current_user.id:
                 return {'message': 'Wrong order id'}, 400
 
             if order.isPay:
+                print('2')
                 return {'message': 'Order is paid already.'}, 400
-            
+
             payWay = form.get('payWay')
             if payWay is None:
+                print('3')
                 return {'message': 'Pay way is required.'}, 400
 
             order.payDate = datetime.now()
